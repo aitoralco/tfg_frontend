@@ -1,1 +1,12 @@
-/* You can add global styles to this file, and also import other style files */
+
+
+@import './styles/variables';
+@import './styles/base';
+
+app-top-nav + main {
+  padding-top: 64px; /* space for nav */
+}
+
+main { display: block; padding: 1rem 0; }
+
+

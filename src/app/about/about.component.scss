@@ -1,0 +1,13 @@
+@import '../../styles/variables';
+
+.about{padding:2rem 0}
+.about .card{
+	background: $white;
+	color: $black;
+	padding: 1.5rem;
+	border-radius: 8px;
+	box-shadow: 0 6px 18px rgba(12,40,60,0.06);
+	max-width: 820px;
+	margin: 0 auto;
+}
+.about h2{margin:0 0 .5rem 0}

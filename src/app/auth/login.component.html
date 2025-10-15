@@ -1,0 +1,21 @@
+<section class="page auth-page">
+  <div class="container">
+    <div class="card auth-card">
+      <h1>Login</h1>
+      <form (submit)="onSubmit($event)">
+        <label class="field">
+          <span>Username</span>
+          <input type="text" [(ngModel)]="username" name="username" />
+        </label>
+        <label class="field">
+          <span>Password</span>
+          <input type="password" [(ngModel)]="password" name="password" />
+        </label>
+        <div class="actions">
+          <button class="btn btn-primary" type="submit">Sign in</button>
+        </div>
+      </form>
+      <p *ngIf="message">{{ message }}</p>
+    </div>
+  </div>
+</section>

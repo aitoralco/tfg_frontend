@@ -1,0 +1,9 @@
+<section class="page upload-page">
+  <h1>Upload video</h1>
+  <input type="file" (change)="onFile($event)" accept="video/*" />
+  <div *ngIf="progress >= 0">Progress: {{ progress }}%</div>
+  <div *ngIf="message">{{ message }}</div>
+  <div style="margin-top:1rem">
+    <button (click)="goHome()">Cancel</button>
+  </div>
+</section>

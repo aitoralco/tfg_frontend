@@ -1,0 +1,19 @@
+<section class="page auth-page">
+  <h1>Register</h1>
+  <form (submit)="onSubmit($event)">
+    <label>
+      Username
+      <input [(ngModel)]="username" name="username" />
+    </label>
+    <label>
+      Email
+      <input type="email" [(ngModel)]="email" name="email" />
+    </label>
+    <label>
+      Password
+      <input type="password" [(ngModel)]="password" name="password" />
+    </label>
+    <button type="submit">Create account</button>
+  </form>
+  <p *ngIf="message">{{ message }}</p>
+</section>

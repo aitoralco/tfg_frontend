@@ -1,0 +1,37 @@
+@import 'variables';
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial;
+  background: $white;
+  color: $black;
+}
+
+/* Utility containers */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: .5rem .75rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background: $sea-blue;
+  color: $white;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: $sea-blue;
+  border: 1px solid rgba(14,127,191,0.12);
+}

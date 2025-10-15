@@ -1,0 +1,21 @@
+<nav class="top-nav" role="navigation" aria-label="Main navigation">
+  <div class="container">
+    <a class="brand" routerLink="/">TFG</a>
+    <ul class="nav-links">
+      <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a></li>
+      <li><a routerLink="/videos" routerLinkActive="active">Videos</a></li>
+      <li><a routerLink="/about" routerLinkActive="active">About</a></li>
+    </ul>
+    <ul class="auth-links">
+      <ng-container *ngIf="user$ | async as user; else loggedOut">
+        <li class="user-pill">
+          <a routerLink="/user">{{ user.username }}</a>
+        </li>
+      </ng-container>
+      <ng-template #loggedOut>
+        <li><a routerLink="/login">Login</a></li>
+        <li><a routerLink="/register" class="register">Register</a></li>
+      </ng-template>
+    </ul>
+  </div>
+</nav>

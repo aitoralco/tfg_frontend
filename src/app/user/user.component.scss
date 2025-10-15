@@ -1,0 +1,22 @@
+@import '../../styles/variables';
+
+.user-page { padding: 2rem 0 }
+.user-page .card{ max-width:900px; margin:0 auto; padding:1rem; border-radius:8px; background:$white; box-shadow:0 10px 30px rgba(12,40,60,0.06)}
+.user-page h1{margin:0 0 .5rem}
+.user-page video{display:block; margin:0 auto}
+
+
+.videos-page { padding: 2rem 0; }
+.videos-page .page-head { max-width: 1100px; margin: 0 auto 1rem; }
+.videos-page .muted { color: $muted; }
+.videos-page .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:1rem; max-width:1100px; margin:0 auto }
+.video-card.card { padding:0; overflow:hidden }
+.video-card h3 { padding: .5rem 1rem }
+.video-card{ cursor: pointer; transition: transform .08s ease, box-shadow .12s ease }
+.video-card:hover{ transform: translateY(-3px); box-shadow: 0 12px 28px rgba(2,6,23,0.06) }
+.video-card.selected{ outline: 2px solid rgba(14,127,191,0.12); box-shadow: 0 14px 36px rgba(2,6,23,0.09) }
+.player-wrap{ max-width:1100px; margin:0 auto 1rem }
+.player-wrap video{ width:100%; border-radius:8px; background:#000 }
+.video-card video{ pointer-events: none; display:block }
+.video-card::after{ content: ''; position: absolute; inset: 0; }
+.video-card { position: relative; }

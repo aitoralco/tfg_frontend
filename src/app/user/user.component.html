@@ -1,0 +1,30 @@
+<section class="page user-page">
+  <h1>User</h1>
+  <p *ngIf="user">Logged in as <strong>{{ user.username }}</strong></p>
+  <p *ngIf="!user">Not signed in.</p>
+  <div *ngIf="videoUrl" style="margin-top:1rem">
+    <h2>Your videos</h2>
+    <video controls [src]="videoUrl" width="640">Your browser does not support the video tag.</video>
+  </div>
+  <div style="margin-top:1rem; display:flex; gap:0.5rem">
+    <button (click)="goUpload()">Upload video</button>
+    <button (click)="logout()">Log out</button>
+  </div>
+  <div class="grid">
+      <ng-container *ngIf="videos?.length; else noVideos">
+        <div class="video-card card" *ngFor="let v of videos" (click)="selectVideo(v)" tabindex="0" role="button" [class.selected]="selectedVideo?.id === v.id">
+          <ng-container *ngIf="v.preview; else streamOnly">
+            <!-- preview comes as base64 fragment (MP4) - no controls, muted -->
+            <video width="100%" muted playsinline [src]="'data:video/mp4;base64,' + v.preview"></video>
+          </ng-container>
+          <ng-template #streamOnly>
+            <video width="100%" muted playsinline [src]="getVideoUrl(v.id)"></video>
+          </ng-template>
+          <h3>{{ v.title || v.file_name }}</h3>
+        </div>
+      </ng-container>
+      <ng-template #noVideos>
+        <div class="card">No videos found.</div>
+      </ng-template>
+    </div>
+</section>

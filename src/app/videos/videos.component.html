@@ -1,0 +1,31 @@
+<section class="page videos-page">
+  <div class="container">
+    <div class="page-head">
+      <h1>Videos</h1>
+      <p class="muted">Browse uploaded videos.</p>
+    </div>
+
+    <div class="player-wrap" *ngIf="selectedSrc">
+      <video #player width="100%" controls [src]="selectedSrc"></video>
+      <h4 *ngIf="selectedVideo">{{ selectedVideo.title || selectedVideo.file_name }}</h4>
+    </div>
+
+    <div class="grid">
+      <ng-container *ngIf="videos?.length; else noVideos">
+        <div class="video-card card" *ngFor="let v of videos" (click)="selectVideo(v)" tabindex="0" role="button" [class.selected]="selectedVideo?.id === v.id">
+          <ng-container *ngIf="v.preview; else streamOnly">
+            <!-- preview comes as base64 fragment (MP4) - no controls, muted -->
+            <video width="100%" muted playsinline [src]="'data:video/mp4;base64,' + v.preview"></video>
+          </ng-container>
+          <ng-template #streamOnly>
+            <video width="100%" muted playsinline [src]="getVideoUrl(v.id)"></video>
+          </ng-template>
+          <h3>{{ v.title || v.file_name }}</h3>
+        </div>
+      </ng-container>
+      <ng-template #noVideos>
+        <div class="card">No videos found.</div>
+      </ng-template>
+    </div>
+  </div>
+</section>
