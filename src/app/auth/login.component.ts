@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
   username = '';
+  user_id = 0;
   password = '';
   message = '';
 
@@ -28,8 +29,10 @@ export class LoginComponent {
       next: (res: any) => {
         // Prefer server-provided username, fallback to submitted
         const username = res?.username || this.username;
+        const user_id = res?.id || this.user_id;
+        const user_role = res?.role || 0;
         if (username) {
-          this.auth.setUser({ username, id: res.id });
+          this.auth.setUser(username, user_id, user_role);
         }
         this.message = 'Signed in successfully.';
         // Redirect to home

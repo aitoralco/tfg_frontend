@@ -12,10 +12,11 @@ export class VideoService {
   /**
    * Upload a video file. Sends multipart/form-data with field 'file'.
    */
-  upload(file: File): Observable<HttpEvent<any>> {
+  upload(file: File, user_id: number): Observable<HttpEvent<any>> {
     const url = new URL('videos/upload', this.base).toString();
     const fd = new FormData();
-    fd.append('file', file, file.name);
+    fd.append('file', file);
+    fd.append('user_id', user_id.toString());
     return this.http.post(url, fd, { reportProgress: true, observe: 'events' });
   }
 
@@ -29,8 +30,11 @@ export class VideoService {
   /**
    * Get video previews page. Returns an object like { previews: [...] }
    */
-  getPreviews(offset = 0, limit = 10, size = 1024) {
+  getPreviews(user_id = 0, offset = 0, limit = 10, size = 1024) {
     const url = new URL('videos/previews', this.base);
+    if (user_id != 0) {
+      url.searchParams.set('user_id', String(user_id.toString()));
+    }
     url.searchParams.set('offset', String(offset));
     url.searchParams.set('limit', String(limit));
     url.searchParams.set('size', String(size));

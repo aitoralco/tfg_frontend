@@ -28,7 +28,7 @@ export class VideosComponent implements OnInit {
   }
 
   loadPreviews(offset = 0, limit = 20, size = 1024) {
-    this.videoService.getPreviews(offset, limit, size).subscribe({ next: (res) => {
+    this.videoService.getPreviews(0, offset, limit, size).subscribe({ next: (res) => {
       this.videos = res.previews || [];
     }, error: (err) => {
       console.error('Failed to load previews', err);

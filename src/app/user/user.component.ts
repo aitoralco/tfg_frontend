@@ -4,6 +4,9 @@ import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { VideoService } from '../videos/video.service';
+import { Observable } from 'rxjs';
+import { UserInterface as CurrentUser } from '../auth/userInterface';
+
 
 @Component({
   selector: 'app-user',
@@ -13,26 +16,20 @@ import { VideoService } from '../videos/video.service';
   styleUrls: ['./user.component.scss']
 })
 export class UserComponent {
-  user: { 
-    username: string,
-    id: number
-  } | null = null;
-  user_id: number | null = null;
   videoUrl: string | null = null;
+
+  user: CurrentUser | null = null;
+  user$: Observable<CurrentUser | null>;
 
   videos: Array<any> = [];
   selectedVideo: any = null;
   selectedSrc = '';
 
   constructor(private auth: AuthService, private router: Router, private videoService: VideoService) {
-    this.user = this.auth.currentUser;
-    this.auth.user$.subscribe(u => this.user = u);
-    // For now show the test video with id 4
-    //try {
-    //  this.videoUrl = new URL('videos/4', environment.apiBaseUrl).toString();
-    //} catch {
-    //  this.videoUrl = `${environment.apiBaseUrl}videos/4`;
-    //}
+    this.user$ = this.auth.user$;
+    this.user$.subscribe(user => {
+      this.user = user;
+    });
   }
 
   ngOnInit(): void {
@@ -79,7 +76,7 @@ export class UserComponent {
   }
 
   loadPreviews(offset = 0, limit = 20, size = 1024) {
-    this.videoService.getPreviews(offset, limit, size).subscribe({ next: (res) => {
+    this.videoService.getPreviews(this.user?.id, offset, limit, size).subscribe({ next: (res) => {
       this.videos = res.previews || [];
     }, error: (err) => {
       console.error('Failed to load previews', err);

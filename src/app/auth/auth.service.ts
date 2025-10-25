@@ -1,10 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-
-export interface CurrentUser {
-  username: string;
-  id: number;
-}
+import { UserInterface as CurrentUser } from './userInterface';
 
 const STORAGE_KEY = 'tfg_current_user';
 
@@ -20,7 +16,8 @@ export class AuthService {
     return this.userSubject.value;
   }
 
-  setUser(user: CurrentUser) {
+  setUser(username: string, user_id: number, user_role: number) {
+    const user: CurrentUser = { username: username, id: user_id, role: user_role};
     this.userSubject.next(user);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(user));

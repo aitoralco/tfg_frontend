@@ -3,6 +3,10 @@ import { CommonModule } from '@angular/common';
 import { VideoService } from './video.service';
 import { HttpEventType } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth/auth.service';
+import { Observable } from 'rxjs';
+import { UserInterface as CurrentUser } from '../auth/userInterface';
+
 
 @Component({
   selector: 'app-video-upload',
@@ -24,8 +28,12 @@ export class UploadComponent {
   file: File | null = null;
   progress = -1;
   message = '';
+  user: CurrentUser | null = null;
+  user$: Observable<CurrentUser | null>;
 
-  constructor(private video: VideoService, private router: Router) {}
+  constructor(private video: VideoService, private router: Router, private auth: AuthService) {
+    this.user$ = this.auth.user$;
+  }
 
   onFile(e: Event) {
     const input = e.target as HTMLInputElement;
@@ -38,7 +46,20 @@ export class UploadComponent {
     if (!this.file) return;
     this.progress = 0;
     this.message = 'Uploading...';
-    this.video.upload(this.file).subscribe({
+
+    this.user$.subscribe(user => {
+      this.user = user;
+    });
+
+    console.log('Uploading file for user id:', this.user?.id);
+
+    if (!this.user) {
+      this.message = 'Upload failed: User not logged in.';
+      this.progress = -1;
+      return;
+    }
+
+    this.video.upload(this.file, this.user?.id).subscribe({
       next: (ev) => {
         if (ev.type === HttpEventType.UploadProgress && ev.total) {
           this.progress = Math.round((100 * (ev.loaded || 0)) / ev.total);

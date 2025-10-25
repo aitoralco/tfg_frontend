@@ -27,8 +27,11 @@ export class RegisterComponent {
     this.registerService.register({ username: this.username, email: this.email, password: this.password }).subscribe({
       next: (res: any) => {
         const username = res?.username || this.username;
+        const user_role = res?.role || 0;
+        const user_id = res?.id;
+        
         if (username) {
-          this.auth.setUser({ username, id: res.id });
+          this.auth.setUser(username, user_id, user_role);
         }
         this.message = 'Account created successfully.';
         // Redirect to home

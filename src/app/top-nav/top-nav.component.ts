@@ -3,8 +3,7 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth/auth.service';
 import { Observable } from 'rxjs';
-
-interface CurrentUser { username: string }
+import { UserInterface as CurrentUser } from '../auth/userInterface';
 
 @Component({
   selector: 'app-top-nav',
