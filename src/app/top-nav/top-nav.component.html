@@ -5,10 +5,9 @@
       <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a></li>
       <li><a routerLink="/videos" routerLinkActive="active">Videos</a></li>
       <li><a routerLink="/about" routerLinkActive="active">About</a></li>
-      <ng-template *ngIf="(user$ | async)?.role === 1">
-        <li><a routerLink="/admin" routerLinkActive="active">Admin</a></li>
-      </ng-template>
-      <li><a routerLink="/users" routerLinkActive="active">Users</a></li>
+      <ng-container *ngIf="(user$ | async)?.role == 1">
+        <li><a routerLink="/users-backoffice" routerLinkActive="active">Admin</a></li>
+      </ng-container>
     </ul>
     <ul class="auth-links">
       <ng-container *ngIf="user$ | async as user; else loggedOut">

@@ -25,10 +25,13 @@ export const routes: Routes = [
 	{
 		path: 'register',
 		loadComponent: () => import('./auth/register.component').then(m => m.RegisterComponent)
-	}
-,
+	},
 	{
 		path: 'user',
 		loadComponent: () => import('./user/user.component').then(m => m.UserComponent)
+	},
+	{
+		path: 'users-backoffice',
+		loadComponent: () => import('./users_backoffice/users.backoffice').then(m => m.UsersBackoffice)
 	}
 ];
