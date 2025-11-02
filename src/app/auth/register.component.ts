@@ -27,7 +27,7 @@ export class RegisterComponent {
     this.registerService.register({ username: this.username, email: this.email, password: this.password }).subscribe({
       next: (res: any) => {
         const username = res?.username || this.username;
-        const user_role = res?.role || 0;
+        const user_role = res?.role.role_number || 0;
         const user_id = res?.id;
         
         if (username) {

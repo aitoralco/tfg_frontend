@@ -11,6 +11,7 @@ import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { UsersService } from "./users.service";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 @Component({
   selector: "app-users-backoffice",
@@ -23,7 +24,8 @@ import { UsersService } from "./users.service";
     MatSortModule,
     MatTableModule, 
     MatInputModule, 
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatSlideToggleModule
   ], 
 })
 export class UsersBackoffice implements AfterViewInit {
@@ -54,7 +56,27 @@ export class UsersBackoffice implements AfterViewInit {
     });
   }
 
-  editUser(user: any){ }
+  editUser(user: any, status: boolean){ 
+    console.log('Editing user:', user, 'Status:', status);
+    this.usersService.updateUser(user.id, {
+      ...user,
+      role: status ? 'admin' : 'user'
+    });
+
+  }
 
   deleteUser(user: any){ }
+
+  onToggleChange(event: any, user: any) {
+    const checked = event.checked; // true if toggled ON, false if OFF
+    console.log('Toggle state:', checked);
+
+    // You can call another function or trigger logic here
+    if (checked) {
+      this.editUser(user, true);
+    }
+    else {
+      this.editUser(user, false);
+    }
+  }
 }

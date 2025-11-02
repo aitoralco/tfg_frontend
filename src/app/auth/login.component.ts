@@ -30,7 +30,7 @@ export class LoginComponent {
         // Prefer server-provided username, fallback to submitted
         const username = res?.username || this.username;
         const user_id = res?.id || this.user_id;
-        const user_role = res?.role || 0;
+        const user_role = res?.role.role_number || 0;
         if (username) {
           this.auth.setUser(username, user_id, user_role);
         }
