@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
-import { UserInterface } from "../auth/userInterface";
+import { UserInterface, UserUpdateInterface } from "../auth/userInterface";
 
 @Injectable({ providedIn: "root" })
 export class UsersService {
@@ -22,8 +22,8 @@ export class UsersService {
     return this.http.post<UserInterface>(`${this.base}users/register`, user);
   }
 
-  updateUser(id: string, user: UserInterface): Observable<UserInterface> {
-    return this.http.post<UserInterface>(`${this.base}users/${id}`, user);
+  updateUser(id: string, user: UserUpdateInterface): Observable<UserUpdateInterface> {
+    return this.http.post<UserUpdateInterface>(`${this.base}users/update/${id}`, user);
   }
 
   deleteUser(id: string): Observable<void> {

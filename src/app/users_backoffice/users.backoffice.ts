@@ -59,24 +59,27 @@ export class UsersBackoffice implements AfterViewInit {
   editUser(user: any, status: boolean){ 
     console.log('Editing user:', user, 'Status:', status);
     this.usersService.updateUser(user.id, {
-      ...user,
-      role: status ? 'admin' : 'user'
+      role_number_fk: status ? 1 : 0
+    }).subscribe(() => {
+      this.loadUsers(); 
+    },
+    (error) => {
+      console.error('Error updating user:', error);
     });
 
   }
 
-  deleteUser(user: any){ }
+  deleteUser(user: any){ 
+    this.usersService.deleteUser(user.id).subscribe(() => {
+      this.loadUsers(); 
+    });
+  }
 
   onToggleChange(event: any, user: any) {
     const checked = event.checked; // true if toggled ON, false if OFF
     console.log('Toggle state:', checked);
 
     // You can call another function or trigger logic here
-    if (checked) {
-      this.editUser(user, true);
-    }
-    else {
-      this.editUser(user, false);
-    }
+    this.editUser(user, checked);
   }
 }

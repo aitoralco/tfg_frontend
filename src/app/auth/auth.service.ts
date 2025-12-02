@@ -17,7 +17,7 @@ export class AuthService {
   }
 
   setUser(username: string, user_id: number, user_role: number) {
-    const user: CurrentUser = { username: username, id: user_id, role: user_role};
+    const user: CurrentUser = { username: username, id: user_id, role_number_fk: user_role};
     this.userSubject.next(user);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
