@@ -5,7 +5,7 @@
       <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a></li>
       <li><a routerLink="/videos" routerLinkActive="active">Videos</a></li>
       <li><a routerLink="/about" routerLinkActive="active">About</a></li>
-      <ng-container *ngIf="(user$ | async)?.role == 1">
+      <ng-container *ngIf="(user$ | async)?.role_number_fk == 1">
         <li><a routerLink="/users-backoffice" routerLinkActive="active">Admin</a></li>
       </ng-container>
     </ul>
