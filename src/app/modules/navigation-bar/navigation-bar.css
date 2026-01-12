@@ -1,0 +1,55 @@
+.navigation-bar {
+    background-color: #155DFC;
+    color: #fff;
+    padding: 10px 20px;
+    min-height: 60px;
+    height: 60px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    /* Lo pone exactamente en el centro sin importar el ancho del logo*/
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nav-links a {
+    display: flex;
+    align-items: center;
+    /* Centra verticalmente */
+    gap: 8px;
+    /* Espacio entre icono y texto */
+    text-decoration: none;
+    color: inherit;
+    /* Hereda el color del texto */
+    padding: 5px 10px;
+    /* Padding interno */
+    border-radius: 8px;
+    /* Bordes redondeados */
+}
+
+.active-link {
+    background-color: #1447E6;
+    color: #fff;
+}
+
+.nav-logo {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: default;
+    user-select: none;
+    margin-right: 20px;
+
+    z-index: 2;
+}
