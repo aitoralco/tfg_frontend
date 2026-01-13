@@ -1,0 +1,10 @@
+<div class="video-card">
+  <img [src]="videoData.thumbnailUrl" [alt]="videoData.name" class="thumb" />
+
+  <div class="details">
+    <h3>{{ videoData.name }}</h3>
+    <p class="author">By: {{ videoData.author }}</p>
+    <p class="date">{{ videoData.uploadDate | date:'mediumDate' }}</p>
+    <p class="description">{{ videoData.description }}</p>
+  </div>
+</div>

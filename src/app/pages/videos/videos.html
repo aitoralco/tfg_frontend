@@ -1,1 +1,5 @@
-<p>videos works!</p>
+<div class="video-grid">
+  @for (video of videos_list; track video.name) {
+  <app-video-card [videoData]="video"></app-video-card>
+  }
+</div>

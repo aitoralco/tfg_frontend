@@ -1,0 +1,14 @@
+.video-card {
+  display: flex;
+  flex-direction: row;
+  min-width: 60%;
+  max-width: 90%;
+  width: 100%;
+}
+
+.thumb {
+  min-width: 50%;
+  min-height: auto;
+  background-color: black;
+  border-radius: 8px;
+}
