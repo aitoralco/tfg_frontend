@@ -1,10 +1,20 @@
 <div class="video-card">
   <img [src]="videoData.thumbnailUrl" [alt]="videoData.name" class="thumb" />
 
-  <div class="details">
-    <h3>{{ videoData.name }}</h3>
-    <p class="author">By: {{ videoData.author }}</p>
-    <p class="date">{{ videoData.uploadDate | date:'mediumDate' }}</p>
-    <p class="description">{{ videoData.description }}</p>
+  <div class="video-details">
+    <div class="video-name">
+      <p>{{ videoData.name }}</p>
+    </div>
+    <div class="video-author">
+      <p>{{ videoData.author}}</p>
+    </div>
+    <div class="video-date">
+      <p>{{ videoData.uploadDate | date:'mediumDate' }}</p>
+    </div>
+    <div class="video-description">
+      <p [title]="videoData.description">
+        {{ videoData.description | slice:0:100}}{{ videoData.description.length > 100 ? '...' : ''}}
+      </p>
+    </div>
   </div>
 </div>

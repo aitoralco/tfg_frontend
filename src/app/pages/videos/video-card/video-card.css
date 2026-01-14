@@ -1,14 +1,60 @@
+:host {
+  display: block;
+  width: 100%; /* Ensures the custom element <app-video-card> is full width */
+}
+
 .video-card {
-  display: flex;
-  flex-direction: row;
-  min-width: 60%;
-  max-width: 90%;
   width: 100%;
+  min-height: auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 20px;
+  flex-direction: row;
 }
 
 .thumb {
-  min-width: 50%;
-  min-height: auto;
-  background-color: black;
+  flex: 0 0 400px;
+  height: auto;
+  aspect-ratio: 16/9;
+  object-fit: cover;
   border-radius: 8px;
+  background-color: #7d94e6;
+}
+
+.video-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.video-name {
+  width: auto;
+  height: auto;
+  background-color: #dbeafe;
+  border-radius: 8px;
+  padding: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0f0f0f;
+}
+
+.video-description {
+  font-size: 0.85rem;
+  color: #606060;
+}
+
+.video-author {
+  font-size: 0.8rem;
+  color: #606060;
+}
+
+.video-date {
+  font-size: 0.8rem;
+  color: #606060;
 }

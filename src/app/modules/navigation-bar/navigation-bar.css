@@ -1,55 +1,120 @@
-.navigation-bar {
-    background-color: #155DFC;
-    color: #fff;
-    padding: 10px 20px;
-    min-height: 60px;
-    height: 60px;
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+}
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
+.navigation-bar {
+  background-color: #155dfc;
+  color: #fff;
+  padding: 10px 20px;
+  min-height: 60px;
+  height: 60px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
 
-    /* Lo pone exactamente en el centro sin importar el ancho del logo*/
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+  /* Lo pone exactamente en el centro sin importar el ancho del logo*/
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .nav-links a {
-    display: flex;
-    align-items: center;
-    /* Centra verticalmente */
-    gap: 8px;
-    /* Espacio entre icono y texto */
-    text-decoration: none;
-    color: inherit;
-    /* Hereda el color del texto */
-    padding: 5px 10px;
-    /* Padding interno */
-    border-radius: 8px;
-    /* Bordes redondeados */
+  display: flex;
+  align-items: center;
+  /* Centra verticalmente */
+  gap: 8px;
+  /* Espacio entre icono y texto */
+  text-decoration: none;
+  color: inherit;
+  /* Hereda el color del texto */
+  padding: 5px 10px;
+  /* Padding interno */
+  border-radius: 8px;
+  /* Bordes redondeados */
 }
 
 .active-link {
-    background-color: #1447E6;
-    color: #fff;
+  background-color: #1447e6;
+  color: #fff;
 }
 
 .nav-logo {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    cursor: default;
-    user-select: none;
-    margin-right: 20px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: default;
+  user-select: none;
+  margin-right: 20px;
 
-    z-index: 2;
+  z-index: 2;
+}
+
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 2; /* Ensures they stay above the absolute centered links */
+}
+
+.welcome-text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9); /* White text to match the blue bar */
+  margin-right: 8px;
+}
+
+button {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Discrete "Ghost" style for Login */
+.btn-login {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #ffffff;
+}
+
+.btn-login:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #ffffff;
+}
+
+/* Clean White style for Register/Profile to stand out slightly more */
+.btn-profile {
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
+  color: #155dfc; /* Text matches the navbar blue */
+}
+/* Discrete Logout */
+.btn-logout {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.btn-logout:hover {
+  background-color: rgba(255, 77, 77, 0.2); /* Subtle red tint */
+  border-color: #ff4d4d;
+  color: #ffffff;
 }
