@@ -1,39 +1,78 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, tap } from 'rxjs';
+import { Router } from '@angular/router';
 import { User } from '../models/user-model';
+import { environment } from '../../environments/environment';
 
-@Injectable({
-  providedIn: 'root',
-})
+interface LoginResponse {
+  access_token: string;
+  token_type: string;
+  user: User;
+}
+
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  // BehaivourSubject mantiene el estado del login actual
-  private loggedIn = new BehaviorSubject<boolean>(!!localStorage.getItem('token'));
+  private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
+  private readonly apiUrl = environment.apiUrl;
 
-  // Para guardar el user
   private currentUser = new BehaviorSubject<User | null>(this.getUserFromStorage());
 
-  // Helper para obtener los datos del usuario del localStorage al refrescar
-  private getUserFromStorage(): User | null {
-    const user = localStorage.getItem('user_data');
-    return user ? JSON.parse(user) : null;
-  }
-
-  // Observable para que los componentes sepan quien está logged
   get currentUser$() {
     return this.currentUser.asObservable();
   }
 
-  login(token: string, userData: User) {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user_data', JSON.stringify(userData));
+  get isAdmin(): boolean {
+    return this.currentUser.value?.role?.name === 'admin';
+  }
 
-    this.loggedIn.next(true);
-    this.currentUser.next(userData);
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  private getUserFromStorage(): User | null {
+    const raw = localStorage.getItem('user_data');
+    return raw ? JSON.parse(raw) : null;
+  }
+
+  login(body: { username: string; password: string }) {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/users/login`, body).pipe(
+      tap(res => {
+        localStorage.setItem('token', res.access_token);
+        localStorage.setItem('user_data', JSON.stringify(res.user));
+        this.currentUser.next(res.user);
+      })
+    );
+  }
+
+  register(body: { username: string; email: string; password: string }) {
+    return this.http.post<User>(`${this.apiUrl}/users/register`, body);
   }
 
   logout() {
+    this.clearSession();
+    this.router.navigate(['/']);
+  }
+
+  updateCurrentUser(user: User) {
+    localStorage.setItem('user_data', JSON.stringify(user));
+    this.currentUser.next(user);
+  }
+
+  clearSession() {
     localStorage.clear();
-    this.loggedIn.next(false);
     this.currentUser.next(null);
+  }
+
+  restoreSession() {
+    if (!this.getToken()) return;
+    this.http.get<User>(`${this.apiUrl}/users/me`).subscribe({
+      next: user => {
+        localStorage.setItem('user_data', JSON.stringify(user));
+        this.currentUser.next(user);
+      },
+      error: () => this.clearSession(),
+    });
   }
 }

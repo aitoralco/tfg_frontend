@@ -1,0 +1,73 @@
+<div class="admin-wrapper">
+  <div class="page-title">Panel de administración</div>
+
+  @if (errorMessage) {
+    <div class="error-message">{{ errorMessage }}</div>
+  }
+
+  @if (isLoading) {
+    <div class="loading-text">Cargando usuarios...</div>
+  } @else {
+    <div class="users-card">
+      <div class="card-title">Usuarios ({{ users.length }})</div>
+
+      <div class="user-list">
+        @for (user of users; track user.id) {
+          <div class="user-row" [class.editing]="editingUserId === user.id">
+            @if (editingUserId !== user.id) {
+              <div class="user-info">
+                <span class="user-name">{{ user.username }}</span>
+                <span class="user-email">{{ user.email }}</span>
+                <span class="role-badge" [class.admin]="user.role.name === 'admin'">
+                  {{ user.role.name }}
+                </span>
+              </div>
+              <div class="user-actions">
+                <button class="btn-secondary" (click)="startEdit(user)">
+                  <mat-icon>edit</mat-icon> Editar
+                </button>
+                <button class="btn-danger" (click)="deleteUser(user.id)">
+                  <mat-icon>delete</mat-icon> Eliminar
+                </button>
+              </div>
+            } @else {
+              <!-- Formulario de edición -->
+              <div class="edit-form" [formGroup]="editForm">
+                @if (editError) {
+                  <div class="error-message">{{ editError }}</div>
+                }
+                <div class="edit-fields">
+                  <div class="form-group">
+                    <label>Usuario</label>
+                    <input type="text" formControlName="username" />
+                  </div>
+                  <div class="form-group">
+                    <label>Correo electrónico</label>
+                    <input type="email" formControlName="email" />
+                  </div>
+                  <div class="form-group">
+                    <label>Nueva contraseña</label>
+                    <input type="password" formControlName="password" placeholder="Dejar vacío para mantener" />
+                  </div>
+                  <div class="form-group">
+                    <label>Rol</label>
+                    <select formControlName="role_id">
+                      <option [value]="1">admin</option>
+                      <option [value]="2">user</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="edit-actions">
+                  <button class="btn-primary" (click)="saveEdit(user.id)">Guardar</button>
+                  <button class="btn-secondary" (click)="cancelEdit()">Cancelar</button>
+                </div>
+              </div>
+            }
+          </div>
+        } @empty {
+          <div class="empty-state">No se encontraron usuarios.</div>
+        }
+      </div>
+    </div>
+  }
+</div>

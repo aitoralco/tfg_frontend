@@ -1,60 +1,95 @@
 :host {
   display: block;
-  width: 100%; /* Ensures the custom element <app-video-card> is full width */
+  width: 100%;
 }
 
 .video-card {
   width: 100%;
-  min-height: auto;
   background-color: #ffffff;
   border-radius: 8px;
-  padding: 20px;
+  padding: 16px;
   box-shadow:
     0 10px 25px -5px rgba(0, 0, 0, 0.1),
     0 8px 10px -6px rgba(0, 0, 0, 0.1);
   display: flex;
   gap: 20px;
-  flex-direction: row;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.video-card:hover {
+  box-shadow:
+    0 20px 40px -10px rgba(0, 0, 0, 0.15),
+    0 10px 15px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.thumb-wrapper {
+  flex: 0 0 280px;
+  aspect-ratio: 16/9;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: #dbeafe;
 }
 
 .thumb {
-  flex: 0 0 400px;
-  height: auto;
-  aspect-ratio: 16/9;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 8px;
-  background-color: #7d94e6;
+}
+
+.thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #155dfc;
+}
+
+.thumb-placeholder mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
 }
 
 .video-details {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  font-family: 'Montserrat', sans-serif;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
 }
 
 .video-name {
-  width: auto;
-  height: auto;
   background-color: #dbeafe;
-  border-radius: 8px;
-  padding: 5px;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-family: 'Montserrat', sans-serif;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #0f0f0f;
 }
 
+.video-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.meta-icon {
+  font-size: 14px !important;
+  width: 14px !important;
+  height: 14px !important;
+}
+
 .video-description {
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.85rem;
   color: #606060;
-}
-
-.video-author {
-  font-size: 0.8rem;
-  color: #606060;
-}
-
-.video-date {
-  font-size: 0.8rem;
-  color: #606060;
+  line-height: 1.5;
+  overflow: hidden;
 }

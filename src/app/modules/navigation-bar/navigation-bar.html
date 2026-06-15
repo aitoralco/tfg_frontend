@@ -4,33 +4,28 @@
     <div class="nav-links">
       <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
         <mat-icon>home</mat-icon>
-        <span>Home</span>
+        <span>Inicio</span>
       </a>
-      <a
-        routerLink="/videos"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{exact: true}"
-      >
+      <a routerLink="/videos" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
         <mat-icon>video_library</mat-icon>
-        <span>Videos</span>
+        <span>Vídeos</span>
       </a>
-      <a
-        routerLink="/contact"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{exact: true}"
-      >
+      <a routerLink="/contact" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
         <mat-icon>contact_support</mat-icon>
-        <span>Contact</span>
+        <span>Contacto</span>
       </a>
     </div>
     <div class="nav-user">
       @if (authService.currentUser$ | async; as user) {
-      <span class="welcome-text">{{ user.username }}!</span>
-
-      <button class="btn-profile" routerLink="/profile">My Videos</button>
-      <button class="btn-logout" (click)="onLogout()">Logout</button>
+        <span class="welcome-text">{{ user.username }}!</span>
+        @if (user.role.name === 'admin') {
+          <button class="btn-admin" routerLink="/admin">Admin</button>
+        }
+        <button class="btn-profile" routerLink="/profile">Mis vídeos</button>
+        <button class="btn-logout" (click)="onLogout()">Cerrar sesión</button>
       } @else {
-      <button class="btn-login" routerLink="/login">Login</button>
+        <button class="btn-login" routerLink="/register">Registrarse</button>
+        <button class="btn-profile" routerLink="/login">Iniciar sesión</button>
       }
     </div>
   </nav>

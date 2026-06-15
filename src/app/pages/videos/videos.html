@@ -1,5 +1,88 @@
-<div class="video-grid">
-  @for (video of videos_list; track video.name) {
-  <app-video-card [videoData]="video"></app-video-card>
+<div class="videos-wrapper">
+  <!-- Search bar -->
+  <div class="search-card">
+    <div class="card-title">Buscar vídeos</div>
+    <div class="search-fields">
+      <div class="search-field">
+        <label>Palabra clave</label>
+        <input type="text" [(ngModel)]="searchQuery" placeholder="Título o descripción..." (keyup.enter)="onSearch()" />
+      </div>
+      <div class="search-field">
+        <label>Subido por</label>
+        <input type="text" [(ngModel)]="searchUploader" placeholder="Usuario..." (keyup.enter)="onSearch()" />
+      </div>
+      <div class="search-field">
+        <label>Desde</label>
+        <input type="date" [(ngModel)]="searchDateFrom" (keyup.enter)="onSearch()" />
+      </div>
+      <div class="search-field">
+        <label>Hasta</label>
+        <input type="date" [(ngModel)]="searchDateTo" (keyup.enter)="onSearch()" />
+      </div>
+    </div>
+    <div class="search-actions">
+      <button class="btn-search" (click)="onSearch()">
+        <mat-icon>search</mat-icon> Buscar
+      </button>
+      @if (isSearchMode) {
+        <button class="btn-clear" (click)="clearSearch()">
+          <mat-icon>close</mat-icon> Limpiar
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Error banner -->
+  @if (error) {
+    <div class="error-banner">
+      <mat-icon>error_outline</mat-icon>
+      {{ error }}
+    </div>
+  }
+
+  <!-- Results info -->
+  <div class="results-info">
+    @if (isLoading) {
+      <span>Cargando...</span>
+    } @else {
+      <span>{{ total }} vídeo{{ total !== 1 ? 's' : '' }} encontrado{{ total !== 1 ? 's' : '' }}</span>
+      @if (isSearchMode) {
+        <span class="search-badge">Resultados de búsqueda</span>
+      }
+    }
+  </div>
+
+  <!-- Video list -->
+  @if (!isLoading) {
+    <div class="video-list">
+      @for (video of videos; track video.id) {
+        <app-video-card [video]="video"></app-video-card>
+      } @empty {
+        <div class="empty-state">
+          <mat-icon>videocam_off</mat-icon>
+          <p>No se encontraron vídeos.</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Pagination -->
+  @if (totalPages > 1) {
+    <div class="pagination">
+      <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      @for (page of pages; track page) {
+        <button
+          class="page-btn"
+          [class.active]="page === currentPage"
+          (click)="goToPage(page)">
+          {{ page + 1 }}
+        </button>
+      }
+      <button class="page-btn" [disabled]="currentPage === totalPages - 1" (click)="goToPage(currentPage + 1)">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
   }
 </div>

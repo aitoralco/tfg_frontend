@@ -1,20 +1,24 @@
-<div class="video-card">
-  <img [src]="videoData.thumbnailUrl" [alt]="videoData.name" class="thumb" />
+<div class="video-card" (click)="navigate()">
+  <div class="thumb-wrapper">
+    @if (previewUrl) {
+      <img [src]="previewUrl" class="thumb" alt="" />
+    } @else {
+      <div class="thumb-placeholder">
+        <mat-icon>play_circle_outline</mat-icon>
+      </div>
+    }
+  </div>
 
   <div class="video-details">
-    <div class="video-name">
-      <p>{{ videoData.name }}</p>
-    </div>
-    <div class="video-author">
-      <p>{{ videoData.author}}</p>
-    </div>
-    <div class="video-date">
-      <p>{{ videoData.uploadDate | date:'mediumDate' }}</p>
+    <div class="video-name">{{ video.title }}</div>
+    <div class="video-meta">
+      <mat-icon class="meta-icon">person</mat-icon>
+      <span>{{ video.uploader }}</span>
+      <mat-icon class="meta-icon">calendar_today</mat-icon>
+      <span>{{ video.created_at | date:'mediumDate' }}</span>
     </div>
     <div class="video-description">
-      <p [title]="videoData.description">
-        {{ videoData.description | slice:0:100}}{{ videoData.description.length > 100 ? '...' : ''}}
-      </p>
+      {{ (video.description?.length ?? 0) > 120 ? (video.description! | slice:0:120) + '...' : video.description }}
     </div>
   </div>
 </div>

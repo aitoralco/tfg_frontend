@@ -1,50 +1,151 @@
-import { Component } from '@angular/core';
-import { Video } from '../../models/video-model';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { finalize } from 'rxjs';
+import { VideoPreview, VideoPreviewResponse } from '../../models/video-model';
+import { VideoService } from '../../services/video.service';
 import { VideoCardComponent } from './video-card/video-card';
+
+const PAGE_SIZE = 10;
 
 @Component({
   selector: 'app-videos-component',
-  imports: [VideoCardComponent],
+  imports: [VideoCardComponent, FormsModule, MatIconModule],
   templateUrl: './videos.html',
   styleUrl: './videos.css',
 })
-export class VideosComponent {
-  videos_list: Video[] = [
-    {
-      name: 'Learning Angular',
-      author: 'John Doe',
-      uploadDate: new Date(2024, 5, 12),
-      thumbnailUrl: 'https://via.placeholder.com/150',
-      description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sodales aliquet mi mattis dignissim. Aliquam tincidunt sed magna non lacinia. Nulla sit amet nunc nulla. Curabitur ligula dui, efficitur a pharetra nec, commodo sed nunc. Sed convallis vel lacus id venenatis. Pellentesque dolor tortor, egestas sit amet velit vitae, suscipit ornare mauris. Aenean viverra tincidunt eros, ac sodales tellus laoreet a. Nunc ac odio neque. Maecenas ac tincidunt magna. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla eleifend tempus condimentum. Cras elementum leo sit amet tincidunt lacinia. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque pellentesque tellus tellus, ac auctor ligula hendrerit non. Quisque eros enim, efficitur mattis auctor ac, lacinia quis erat.
+export class VideosComponent implements OnInit {
+  private readonly videoService = inject(VideoService);
 
-      Sed ultrices nunc quis dui lacinia posuere. Praesent nec odio tellus. Etiam ut eleifend dui. Phasellus volutpat libero magna, sollicitudin tincidunt arcu suscipit sed. Fusce nec turpis luctus, dictum mauris vel, imperdiet erat. Sed eu elit et neque aliquet interdum. Vivamus nec eros mi. Mauris euismod ipsum sed lectus varius, eu efficitur ipsum aliquam. Cras molestie est sed venenatis volutpat. Fusce a dui sed neque cursus vulputate a nec ipsum. Mauris a pellentesque nibh.
+  videos: VideoPreview[] = [];
+  total = 0;
+  currentPage = 0;
+  isLoading = false;
+  isSearchMode = false;
+  error = '';
 
-      Donec in velit mi. Quisque sed diam elementum mi scelerisque vulputate. Aliquam egestas arcu dolor, sodales molestie dolor rhoncus a. Proin tempor sit amet urna a malesuada. Maecenas libero dolor, molestie vel facilisis sed, sagittis cursus ante. Ut at sodales neque. Fusce ultricies tincidunt turpis non pellentesque. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nunc fermentum, massa a varius mollis, erat nisi tempor sem, eu commodo elit sem eu est. Aliquam ac congue leo, non maximus ante.
+  searchQuery = '';
+  searchUploader = '';
+  searchDateFrom = '';
+  searchDateTo = '';
 
-      Proin blandit euismod massa. Etiam viverra sodales ipsum, hendrerit finibus felis lobortis eu. Curabitur aliquam sapien non metus placerat, quis molestie neque porta. Pellentesque tincidunt sed dui quis hendrerit. Sed bibendum nibh auctor, feugiat libero non, feugiat tortor. Maecenas sed mi et magna scelerisque dignissim. Mauris rhoncus libero id arcu congue viverra. Donec fermentum elementum dui eget egestas. Duis arcu nibh, pulvinar bibendum tristique vitae, fringilla sit amet diam. Sed tincidunt turpis a leo hendrerit semper.
+  get totalPages(): number {
+    return Math.ceil(this.total / PAGE_SIZE);
+  }
 
-      Pellentesque sit amet pretium arcu. Vestibulum interdum faucibus odio ultrices suscipit. Suspendisse potenti. Donec lorem elit, egestas id elementum eget, porta vitae mauris. Duis nec sapien id mauris dictum varius eget ac urna. Nulla sit amet libero elit. Praesent efficitur vel elit ultrices ullamcorper. Aliquam erat volutpat. Vestibulum eget lobortis augue. Duis porttitor ex vitae felis commodo, eget lobortis quam molestie. Suspendisse potenti. Cras vitae libero felis.`,
-    },
-    {
-      name: 'Learning Angular',
-      author: 'John Doe',
-      uploadDate: new Date(2024, 5, 12),
-      thumbnailUrl: 'https://via.placeholder.com/150',
-      description: 'A begginer guide to Angular',
-    },
-    {
-      name: 'Learning Angular',
-      author: 'John Doe',
-      uploadDate: new Date(2024, 5, 12),
-      thumbnailUrl: 'https://via.placeholder.com/150',
-      description: 'A begginer guide to Angular',
-    },
-    {
-      name: 'Learning Angular',
-      author: 'John Doe',
-      uploadDate: new Date(2024, 5, 12),
-      thumbnailUrl: 'https://via.placeholder.com/150',
-      description: 'A begginer guide to Angular',
-    },
-  ];
+  get pages(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i);
+  }
+
+  ngOnInit() {
+    this.loadPreviews();
+  }
+
+  loadPreviews() {
+    this.isLoading = true;
+    this.error = '';
+    this.videoService
+      .getPreviews(this.currentPage * PAGE_SIZE, PAGE_SIZE)
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (res: VideoPreviewResponse) => {
+          this.videos = res.previews;
+          this.total = res.total;
+        },
+        error: err => {
+          this.error =
+            err.status === 0
+              ? 'No se puede conectar al servidor.'
+              : (err.error?.detail ?? 'Error al cargar los vídeos.');
+          this.videos = [];
+          this.total = 0;
+        },
+      });
+  }
+
+  onSearch() {
+    const hasFilters =
+      this.searchQuery || this.searchUploader || this.searchDateFrom || this.searchDateTo;
+    this.currentPage = 0;
+
+    if (!hasFilters) {
+      this.isSearchMode = false;
+      this.loadPreviews();
+      return;
+    }
+
+    this.isSearchMode = true;
+    this.isLoading = true;
+    this.error = '';
+    this.videoService
+      .search({
+        q: this.searchQuery || undefined,
+        uploader: this.searchUploader || undefined,
+        date_from: this.searchDateFrom || undefined,
+        date_to: this.searchDateTo || undefined,
+        offset: 0,
+        limit: PAGE_SIZE,
+      })
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (res: VideoPreviewResponse) => {
+          this.videos = res.previews;
+          this.total = res.total;
+        },
+        error: err => {
+          this.error =
+            err.status === 0
+              ? 'No se puede conectar al servidor.'
+              : (err.error?.detail ?? 'Error en la búsqueda.');
+          this.videos = [];
+          this.total = 0;
+        },
+      });
+  }
+
+  clearSearch() {
+    this.searchQuery = '';
+    this.searchUploader = '';
+    this.searchDateFrom = '';
+    this.searchDateTo = '';
+    this.isSearchMode = false;
+    this.currentPage = 0;
+    this.error = '';
+    this.loadPreviews();
+  }
+
+  goToPage(page: number) {
+    if (page < 0 || page >= this.totalPages) return;
+    this.currentPage = page;
+
+    if (this.isSearchMode) {
+      this.isLoading = true;
+      this.error = '';
+      this.videoService
+        .search({
+          q: this.searchQuery || undefined,
+          uploader: this.searchUploader || undefined,
+          date_from: this.searchDateFrom || undefined,
+          date_to: this.searchDateTo || undefined,
+          offset: page * PAGE_SIZE,
+          limit: PAGE_SIZE,
+        })
+        .pipe(finalize(() => (this.isLoading = false)))
+        .subscribe({
+          next: (res: VideoPreviewResponse) => {
+            this.videos = res.previews;
+            this.total = res.total;
+          },
+          error: err => {
+            this.error = err.status === 0
+              ? 'No se puede conectar al servidor.'
+              : (err.error?.detail ?? 'Error en la búsqueda.');
+            this.videos = [];
+            this.total = 0;
+          },
+        });
+    } else {
+      this.loadPreviews();
+    }
+  }
 }

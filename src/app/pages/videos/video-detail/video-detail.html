@@ -1,0 +1,291 @@
+<div class="detail-wrapper">
+  <button class="btn-back" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon> Volver
+  </button>
+
+  @if (isLoading) {
+    <div class="state-card">
+      <mat-icon>hourglass_empty</mat-icon>
+      <span>Cargando...</span>
+    </div>
+  }
+
+  @if (loadError) {
+    <div class="error-banner">
+      <mat-icon>error_outline</mat-icon>
+      {{ loadError }}
+    </div>
+  }
+
+  @if (!isLoading && info) {
+    <!-- Info header -->
+    <div class="info-card">
+      @if (thumbnailUrl) {
+        <img [src]="thumbnailUrl" class="info-thumb" alt="" />
+      }
+      <div class="info-body">
+        <div class="info-title">{{ info.title }}</div>
+        <div class="info-badges">
+          <span [class]="'status-badge ' + statusClass">
+            <mat-icon>{{ statusIcon }}</mat-icon>
+            {{ getStatusLabel(info.status.status_name) }}
+          </span>
+          <span class="shared-badge" [class.shared-yes]="info.shared" [class.shared-no]="!info.shared">
+            <mat-icon>{{ info.shared ? 'public' : 'lock' }}</mat-icon>
+            {{ info.shared ? 'Público' : 'Privado' }}
+          </span>
+        </div>
+        @if (info.description) {
+          <div class="info-description">{{ info.description }}</div>
+        }
+        <div class="info-meta">
+          <mat-icon class="meta-icon">person</mat-icon>
+          <span>{{ info.uploader }}</span>
+          <span class="meta-sep">·</span>
+          <mat-icon class="meta-icon">calendar_today</mat-icon>
+          <span>{{ info.created_at | date:'mediumDate' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab bar -->
+    <div class="tab-bar">
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'original'"
+        (click)="setTab('original')">
+        <mat-icon>play_circle</mat-icon>
+        <span>Original</span>
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'dw'"
+        [class.unavailable]="!info.dw.available"
+        (click)="setTab('dw')">
+        <mat-icon>analytics</mat-icon>
+        <span>Rorcuales</span>
+        @if (info.dw.available) {
+          <span class="tab-badge">{{ info.dw.label_count }}</span>
+        }
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'ew'"
+        [class.unavailable]="!info.ew.available"
+        (click)="setTab('ew')">
+        <mat-icon>pets</mat-icon>
+        <span>Recortes</span>
+        @if (info.ew.available) {
+          <span class="tab-badge">{{ info.ew.crop_count }}</span>
+        }
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'dem'"
+        [class.unavailable]="!info.dem.available"
+        (click)="setTab('dem')">
+        <mat-icon>layers</mat-icon>
+        <span>Marcas dorsales</span>
+        @if (info.dem.available) {
+          <span class="tab-badge">{{ info.dem.crop_count }}</span>
+        }
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'clf'"
+        [class.unavailable]="!info.classification"
+        (click)="setTab('clf')">
+        <mat-icon>bar_chart</mat-icon>
+        <span>Clasificación</span>
+        <span class="tab-beta">Beta</span>
+        @if (info.classification) {
+          <span class="tab-badge">{{ clfEntries.length }}</span>
+        }
+      </button>
+    </div>
+
+    <!-- Original tab – always in DOM once info loads, hidden via CSS when inactive -->
+    <div class="player-card" [style.display]="activeTab !== 'original' ? 'none' : ''">
+      <video #origVideo class="video-player" controls preload="metadata">
+        Tu navegador no soporta la reproducción de vídeo.
+      </video>
+    </div>
+
+    <!-- DW tab -->
+    @if (activeTab === 'dw') {
+      @if (info.dw.available) {
+        <div class="player-card">
+          <video #dwVideo class="video-player" controls preload="metadata">
+            Tu navegador no soporta la reproducción de vídeo.
+          </video>
+        </div>
+        <div class="dw-stats">
+          <mat-icon>label</mat-icon>
+          <span>{{ info.dw.label_count }} detecciones anotadas</span>
+        </div>
+      } @else {
+        <div class="unavailable-card">
+          <mat-icon>{{ unavailableIcon }}</mat-icon>
+          <p>{{ getUnavailableMessage() }}</p>
+        </div>
+      }
+    }
+
+    <!-- EW crops tab -->
+    @if (activeTab === 'ew') {
+      @if (info.ew.available) {
+        @if (ewLoading) {
+          <div class="state-card">
+            <mat-icon>hourglass_empty</mat-icon>
+            <span>Cargando recortes...</span>
+          </div>
+        } @else if (ewError) {
+          <div class="error-banner">
+            <mat-icon>error_outline</mat-icon>
+            {{ ewError }}
+          </div>
+        } @else {
+          <div class="crops-section">
+            <div class="crops-header">
+              <span>{{ ewTotal }} recorte{{ ewTotal !== 1 ? 's' : '' }}</span>
+            </div>
+            <div class="crops-grid">
+              @for (crop of ewCrops; track crop.key) {
+                <img [src]="crop.url" class="crop-img" alt="Recorte EW" />
+              } @empty {
+                <p class="no-crops">No hay recortes disponibles.</p>
+              }
+            </div>
+            @if (ewTotalPages > 1) {
+              <div class="pagination">
+                <button class="page-btn" [disabled]="ewPage === 0" (click)="loadEwCrops(ewPage - 1)">
+                  <mat-icon>chevron_left</mat-icon>
+                </button>
+                @for (item of getPaginatorPages(ewPage, ewTotalPages); track $index) {
+                  @if (item === null) {
+                    <span class="page-ellipsis">…</span>
+                  } @else {
+                    <button class="page-btn" [class.active]="item === ewPage" (click)="loadEwCrops(item)">
+                      {{ item + 1 }}
+                    </button>
+                  }
+                }
+                <button class="page-btn" [disabled]="ewPage === ewTotalPages - 1" (click)="loadEwCrops(ewPage + 1)">
+                  <mat-icon>chevron_right</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+        }
+      } @else {
+        <div class="unavailable-card">
+          <mat-icon>{{ unavailableIcon }}</mat-icon>
+          <p>{{ getUnavailableMessage() }}</p>
+        </div>
+      }
+    }
+
+    <!-- Classification tab -->
+    @if (activeTab === 'clf') {
+      @if (info.classification) {
+        <div class="clf-section">
+          <div class="clf-summary">
+            <div class="clf-stat">
+              <span class="clf-stat-value">{{ info.classification.total_images }}</span>
+              <span class="clf-stat-label">imágenes totales</span>
+            </div>
+            <div class="clf-stat">
+              <span class="clf-stat-value">{{ info.classification.classified_images }}</span>
+              <span class="clf-stat-label">clasificadas</span>
+            </div>
+            @if (info.classification.errors > 0) {
+              <div class="clf-stat clf-stat-error">
+                <span class="clf-stat-value">{{ info.classification.errors }}</span>
+                <span class="clf-stat-label">errores</span>
+              </div>
+            }
+          </div>
+          <div class="clf-classes">
+            @for (entry of clfEntries; track entry.name) {
+              <div class="clf-class-card">
+                <div class="clf-class-header">
+                  <span class="clf-class-name">{{ entry.name }}</span>
+                  <span class="clf-class-count">{{ entry.count }} imagen{{ entry.count !== 1 ? 'es' : '' }}</span>
+                </div>
+                <div class="clf-bar-row">
+                  <div class="clf-bar-track">
+                    <div class="clf-bar-fill" [style.width.%]="entry.percentage"></div>
+                  </div>
+                  <span class="clf-pct">{{ entry.percentage | number:'1.1-1' }}%</span>
+                </div>
+                <div class="clf-confidence">
+                  <mat-icon>psychology</mat-icon>
+                  Confianza media: <strong>{{ (entry.avg_confidence * 100) | number:'1.1-1' }}%</strong>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="unavailable-card">
+          <mat-icon>{{ unavailableIcon }}</mat-icon>
+          <p>{{ getUnavailableMessage() }}</p>
+        </div>
+      }
+    }
+
+    <!-- DEM crops tab -->
+    @if (activeTab === 'dem') {
+      @if (info.dem.available) {
+        @if (demLoading) {
+          <div class="state-card">
+            <mat-icon>hourglass_empty</mat-icon>
+            <span>Cargando recortes...</span>
+          </div>
+        } @else if (demError) {
+          <div class="error-banner">
+            <mat-icon>error_outline</mat-icon>
+            {{ demError }}
+          </div>
+        } @else {
+          <div class="crops-section">
+            <div class="crops-header">
+              <span>{{ demTotal }} recorte{{ demTotal !== 1 ? 's' : '' }}</span>
+            </div>
+            <div class="crops-grid">
+              @for (crop of demCrops; track crop.key) {
+                <img [src]="crop.url" class="crop-img" alt="Recorte DEM" />
+              } @empty {
+                <p class="no-crops">No hay recortes disponibles.</p>
+              }
+            </div>
+            @if (demTotalPages > 1) {
+              <div class="pagination">
+                <button class="page-btn" [disabled]="demPage === 0" (click)="loadDemCrops(demPage - 1)">
+                  <mat-icon>chevron_left</mat-icon>
+                </button>
+                @for (item of getPaginatorPages(demPage, demTotalPages); track $index) {
+                  @if (item === null) {
+                    <span class="page-ellipsis">…</span>
+                  } @else {
+                    <button class="page-btn" [class.active]="item === demPage" (click)="loadDemCrops(item)">
+                      {{ item + 1 }}
+                    </button>
+                  }
+                }
+                <button class="page-btn" [disabled]="demPage === demTotalPages - 1" (click)="loadDemCrops(demPage + 1)">
+                  <mat-icon>chevron_right</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+        }
+      } @else {
+        <div class="unavailable-card">
+          <mat-icon>{{ unavailableIcon }}</mat-icon>
+          <p>{{ getUnavailableMessage() }}</p>
+        </div>
+      }
+    }
+  }
+</div>

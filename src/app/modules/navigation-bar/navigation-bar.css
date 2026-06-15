@@ -106,6 +106,18 @@ button {
   border: 1px solid #ffffff;
   color: #155dfc; /* Text matches the navbar blue */
 }
+/* Admin button */
+.btn-admin {
+  background-color: #f59e0b;
+  border: 1px solid #f59e0b;
+  color: #ffffff;
+}
+
+.btn-admin:hover {
+  background-color: #d97706;
+  border-color: #d97706;
+}
+
 /* Discrete Logout */
 .btn-logout {
   background: transparent;

@@ -1,0 +1,289 @@
+<div class="profile-wrapper">
+  <!-- Header -->
+  <div class="profile-header">
+    <div class="header-info">
+      <div class="header-title">{{ currentUser?.username }}</div>
+      <div class="header-sub">{{ currentUser?.email }} &nbsp;·&nbsp; {{ currentUser?.role?.name }}</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <button class="tab-btn" [class.active]="activeTab === 'videos'" (click)="setTab('videos')">
+      <mat-icon>video_library</mat-icon> Mis vídeos
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'upload'" (click)="setTab('upload')">
+      <mat-icon>upload</mat-icon> Subir
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'settings'" (click)="setTab('settings')">
+      <mat-icon>settings</mat-icon> Ajustes
+    </button>
+  </div>
+
+  <!-- My Videos tab -->
+  @if (activeTab === 'videos') {
+    <div class="tab-content">
+
+      <!-- Filter bar -->
+      <form class="filter-bar" [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+        <div class="filter-row">
+          <div class="filter-search">
+            <mat-icon>search</mat-icon>
+            <input type="text" formControlName="q" placeholder="Buscar por título o descripción…" />
+          </div>
+          <select formControlName="status_id" class="filter-select">
+            <option value="">Todos los estados</option>
+            @for (s of statusOptions; track s.id) {
+              <option [value]="s.id">{{ s.label }}</option>
+            }
+          </select>
+          <input type="date" formControlName="date_from" class="filter-date" title="Desde" />
+          <input type="date" formControlName="date_to" class="filter-date" title="Hasta" />
+        </div>
+        <div class="filter-row filter-row-bottom">
+          <div class="filter-sort">
+            <span class="filter-label">Ordenar por</span>
+            <select formControlName="sort_by" class="filter-select">
+              <option value="created_at">Fecha de subida</option>
+              <option value="updated_at">Última actualización</option>
+              <option value="title">Título</option>
+            </select>
+            <button type="button" class="btn-order" (click)="filterForm.get('order')?.setValue(filterForm.get('order')?.value === 'asc' ? 'desc' : 'asc')">
+              <mat-icon>{{ filterForm.get('order')?.value === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+              {{ filterForm.get('order')?.value === 'asc' ? 'Asc' : 'Desc' }}
+            </button>
+          </div>
+          <div class="filter-actions">
+            @if (hasActiveFilters) {
+              <button type="button" class="btn-secondary" (click)="clearFilters()">
+                <mat-icon>close</mat-icon> Limpiar
+              </button>
+            }
+            <button type="submit" class="btn-primary">
+              <mat-icon>search</mat-icon> Buscar
+            </button>
+          </div>
+        </div>
+      </form>
+
+      @if (videosLoading) {
+        <div class="loading-text">Cargando vídeos…</div>
+      } @else if (myVideos.length === 0 && !hasActiveFilters) {
+        <div class="empty-state">
+          <mat-icon>videocam_off</mat-icon>
+          <p>Aún no has subido ningún vídeo.</p>
+          <button class="btn-primary" (click)="setTab('upload')">Subir vídeo</button>
+        </div>
+      } @else if (myVideos.length === 0) {
+        <div class="empty-state">
+          <mat-icon>search_off</mat-icon>
+          <p>No se encontraron vídeos con los filtros aplicados.</p>
+          <button class="btn-secondary" (click)="clearFilters()">Limpiar filtros</button>
+        </div>
+      } @else {
+        <div class="my-video-list">
+          @for (video of myVideos; track video.id) {
+            <div class="my-video-item">
+              <div class="my-video-thumb" (click)="watchVideo(video)">
+                @if (getPreviewUrl(video)) {
+                  <img [src]="getPreviewUrl(video)" class="thumb" alt="" />
+                } @else {
+                  <div class="thumb-placeholder"><mat-icon>play_circle_outline</mat-icon></div>
+                }
+              </div>
+
+              @if (editingVideoId !== video.id) {
+                <div class="my-video-info">
+                  <div class="my-video-title-row">
+                    <div class="my-video-title">{{ video.title }}</div>
+                    <span [class]="'status-badge ' + getStatusClass(video.status.status_name)">
+                      <mat-icon>{{ getStatusIcon(video.status.status_name) }}</mat-icon>
+                      {{ getStatusLabel(video.status.status_name) }}
+                    </span>
+                    <span class="shared-badge" [class.shared-yes]="video.shared" [class.shared-no]="!video.shared">
+                      <mat-icon>{{ video.shared ? 'public' : 'lock' }}</mat-icon>
+                      {{ video.shared ? 'Público' : 'Privado' }}
+                    </span>
+                  </div>
+                  <div class="my-video-desc">{{ video.description }}</div>
+                  <div class="my-video-date">{{ video.created_at | date:'mediumDate' }}</div>
+                  <div class="my-video-actions">
+                    <button class="btn-secondary" (click)="startEdit(video)">
+                      <mat-icon>edit</mat-icon> Editar
+                    </button>
+                    <button class="btn-danger" (click)="deleteVideo(video.id)">
+                      <mat-icon>delete</mat-icon> Eliminar
+                    </button>
+                    <button class="btn-watch" (click)="watchVideo(video)">
+                      <mat-icon>play_arrow</mat-icon> Ver
+                    </button>
+                  </div>
+                </div>
+              } @else {
+                <!-- Inline edit form -->
+                <div class="edit-form" [formGroup]="editForm">
+                  @if (editError) {
+                    <div class="error-message">{{ editError }}</div>
+                  }
+                  <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" formControlName="title" />
+                  </div>
+                  <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea formControlName="description" rows="3"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label>Visibilidad</label>
+                    <div class="toggle-row">
+                      <label class="toggle-switch">
+                        <input type="checkbox" formControlName="shared" />
+                        <span class="toggle-slider"></span>
+                      </label>
+                      <span class="toggle-label">
+                        {{ editForm.get('shared')?.value ? 'Público' : 'Privado' }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="edit-actions">
+                    <button class="btn-primary" (click)="saveEdit(video.id)">Guardar</button>
+                    <button class="btn-secondary" (click)="cancelEdit()">Cancelar</button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Upload tab -->
+  @if (activeTab === 'upload') {
+    <div class="tab-content">
+      <div class="form-card">
+        <div class="card-title">Subir vídeo</div>
+
+        <form [formGroup]="uploadForm" (ngSubmit)="onUpload()">
+          <div class="form-group">
+            <label>Título <span class="required">*</span></label>
+            <input type="text" formControlName="title" placeholder="Título del vídeo..." />
+          </div>
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea formControlName="description" rows="4" placeholder="Descripción opcional..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Archivo de vídeo <span class="required">*</span></label>
+            <div class="file-input-wrapper">
+              <input type="file" accept="video/*" id="videoFile" class="file-input-hidden" (change)="onFileChange($event)" />
+              <label for="videoFile" class="btn-file-pick">
+                <mat-icon>attach_file</mat-icon>
+                Elegir archivo
+              </label>
+              @if (uploadFile) {
+                <span class="file-name">{{ uploadFile.name }}</span>
+              } @else {
+                <span class="file-name file-name-empty">Ningún archivo seleccionado</span>
+              }
+            </div>
+          </div>
+          @if (uploadLoading) {
+            <div class="progress-bar-wrapper">
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" [style.width.%]="uploadProgress"></div>
+              </div>
+              <span class="progress-label">{{ uploadProgress }}%</span>
+            </div>
+          }
+          @if (uploadError) {
+            <div class="error-message">
+              <mat-icon>error_outline</mat-icon>
+              {{ uploadError }}
+            </div>
+          }
+          @if (uploadSuccess) {
+            <div class="success-message">
+              <mat-icon>check_circle_outline</mat-icon>
+              {{ uploadSuccess }}
+            </div>
+          }
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="uploadForm.invalid || !uploadFile || uploadLoading">
+            {{ uploadLoading ? 'Subiendo...' : 'Subir' }}
+          </button>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Settings tab -->
+  @if (activeTab === 'settings') {
+    <div class="tab-content">
+      <!-- Update profile -->
+      <div class="form-card">
+        <div class="card-title">Actualizar perfil</div>
+        <p class="hint">Deja los campos vacíos para no modificarlos. La contraseña actual siempre es obligatoria.</p>
+
+        @if (settingsError) {
+          <div class="error-message">{{ settingsError }}</div>
+        }
+        @if (settingsSuccess) {
+          <div class="success-message">{{ settingsSuccess }}</div>
+        }
+
+        <form [formGroup]="settingsForm" (ngSubmit)="onSaveSettings()">
+          <div class="form-group">
+            <label>Nuevo usuario</label>
+            <input type="text" formControlName="username" [placeholder]="currentUser?.username ?? ''" />
+          </div>
+          <div class="form-group">
+            <label>Nuevo correo electrónico</label>
+            <input type="email" formControlName="email" [placeholder]="currentUser?.email ?? ''" />
+          </div>
+          <div class="form-group">
+            <label>Nueva contraseña</label>
+            <input type="password" formControlName="new_password" placeholder="Dejar vacío para no cambiarla" />
+          </div>
+          <div class="form-group">
+            <label>Contraseña actual <span class="required">*</span></label>
+            <input type="password" formControlName="current_password" placeholder="Obligatoria para confirmar" />
+          </div>
+          <button type="submit" class="btn-primary" [disabled]="settingsForm.invalid || settingsLoading">
+            {{ settingsLoading ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </form>
+      </div>
+
+      <!-- Delete account -->
+      <div class="form-card danger-zone">
+        <div class="card-title danger-title">Zona de peligro</div>
+
+        @if (!showDeleteConfirm) {
+          <button class="btn-danger-outline" (click)="showDeleteConfirm = true">
+            <mat-icon>delete_forever</mat-icon> Eliminar cuenta
+          </button>
+        } @else {
+          <p class="danger-warning">Esta acción es irreversible. Introduce tu contraseña para confirmar.</p>
+          @if (deleteError) {
+            <div class="error-message">{{ deleteError }}</div>
+          }
+          <form [formGroup]="deleteForm" (ngSubmit)="onDeleteAccount()">
+            <div class="form-group">
+              <label>Contraseña</label>
+              <input type="password" formControlName="current_password" />
+            </div>
+            <div class="edit-actions">
+              <button type="submit" class="btn-danger" [disabled]="deleteForm.invalid || deleteLoading">
+                {{ deleteLoading ? 'Eliminando...' : 'Confirmar eliminación' }}
+              </button>
+              <button type="button" class="btn-secondary" (click)="showDeleteConfirm = false">Cancelar</button>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+  }
+</div>
