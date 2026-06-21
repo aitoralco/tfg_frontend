@@ -38,12 +38,12 @@ export class Profile implements OnInit {
 
   readonly statusOptions = [
     { id: 1, label: 'Error' },
-    { id: 2, label: 'Sin procesar' },
-    { id: 3, label: 'Iniciando procesamiento' },
-    { id: 4, label: 'Detectando rorcuales' },
-    { id: 5, label: 'Recortando rorcuales' },
-    { id: 6, label: 'Extrayendo marcas dorsales' },
-    { id: 7, label: 'Procesado' },
+    { id: 2, label: 'Unprocessed' },
+    { id: 3, label: 'Starting' },
+    { id: 4, label: 'Detecting whales' },
+    { id: 5, label: 'Cropping whales' },
+    { id: 6, label: 'Extracting dorsal marks' },
+    { id: 7, label: 'Processed' },
   ];
 
   filterForm = this.fb.group({
@@ -151,12 +151,12 @@ export class Profile implements OnInit {
   getStatusLabel(status: StatusName): string {
     const labels: Record<StatusName, string> = {
       error: 'Error',
-      unprocessed: 'Sin procesar',
-      processing_0: 'Iniciando',
-      processing_dw: 'Detectando rorcuales',
-      processing_ew: 'Recortando rorcuales',
-      processing_dem: 'Extrayendo marcas dorsales',
-      processed: 'Procesado',
+      unprocessed: 'Unprocessed',
+      processing_0: 'Starting',
+      processing_dw: 'Detecting whales',
+      processing_ew: 'Cropping whales',
+      processing_dem: 'Extracting dorsal marks',
+      processed: 'Processed',
     };
     return labels[status] ?? status;
   }
@@ -205,18 +205,18 @@ export class Profile implements OnInit {
         this.editingVideoId = null;
       },
       error: err => {
-        this.editError = err.error?.detail ?? 'Error al guardar los cambios.';
+        this.editError = err.error?.detail ?? 'Update failed.';
       },
     });
   }
 
   deleteVideo(videoId: number) {
-    if (!confirm('¿Eliminar este vídeo?')) return;
+    if (!confirm('Delete this video?')) return;
     this.videoService.delete(videoId).subscribe({
       next: () => {
         this.myVideos = this.myVideos.filter(v => v.id !== videoId);
       },
-      error: err => alert(err.error?.detail ?? 'Error al eliminar el vídeo.'),
+      error: err => alert(err.error?.detail ?? 'Delete failed.'),
     });
   }
 
@@ -241,7 +241,7 @@ export class Profile implements OnInit {
           if (event.type === HttpEventType.UploadProgress) {
             this.uploadProgress = Math.round(100 * (event.loaded / (event.total ?? event.loaded)));
           } else if (event.type === HttpEventType.Response) {
-            this.uploadSuccess = `Vídeo subido correctamente. ID: ${event.body!.video_id}`;
+            this.uploadSuccess = `Video uploaded! ID: ${event.body!.video_id}`;
             this.uploadForm.reset();
             this.uploadFile = null;
             if (this.currentUser) this.loadMyVideos();
@@ -251,7 +251,7 @@ export class Profile implements OnInit {
         error: err => {
           this.uploadProgress = 0;
           const detail = err?.error && typeof err.error === 'object' ? err.error.detail : null;
-          this.uploadError = detail ?? (err?.status > 0 ? `Error al subir el vídeo (${err.status}).` : 'No se puede conectar al servidor.');
+          this.uploadError = detail ?? (err?.status > 0 ? `Upload failed (${err.status}).` : 'Cannot reach server.');
         },
       });
   }
@@ -271,14 +271,14 @@ export class Profile implements OnInit {
     this.userService.updateMe(body as any).subscribe({
       next: updatedUser => {
         this.settingsLoading = false;
-        this.settingsSuccess = 'Perfil actualizado correctamente.';
+        this.settingsSuccess = 'Profile updated successfully.';
         this.authService.updateCurrentUser(updatedUser);
         this.settingsForm.reset();
       },
       error: err => {
         this.settingsLoading = false;
         this.settingsError =
-          err.status === 403 ? 'Contraseña actual incorrecta.' : (err.error?.detail ?? 'Error al guardar los cambios.');
+          err.status === 403 ? 'Wrong current password.' : (err.error?.detail ?? 'Update failed.');
       },
     });
   }
@@ -295,7 +295,7 @@ export class Profile implements OnInit {
       error: err => {
         this.deleteLoading = false;
         this.deleteError =
-          err.status === 403 ? 'Contraseña incorrecta.' : (err.error?.detail ?? 'Error al eliminar la cuenta.');
+          err.status === 403 ? 'Wrong password.' : (err.error?.detail ?? 'Delete failed.');
       },
     });
   }

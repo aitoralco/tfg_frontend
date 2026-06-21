@@ -55,8 +55,8 @@ export class VideosComponent implements OnInit {
         error: err => {
           this.error =
             err.status === 0
-              ? 'No se puede conectar al servidor.'
-              : (err.error?.detail ?? 'Error al cargar los vídeos.');
+              ? 'Cannot connect to server.'
+              : (err.error?.detail ?? 'Failed to load videos.');
           this.videos = [];
           this.total = 0;
         },
@@ -95,8 +95,8 @@ export class VideosComponent implements OnInit {
         error: err => {
           this.error =
             err.status === 0
-              ? 'No se puede conectar al servidor.'
-              : (err.error?.detail ?? 'Error en la búsqueda.');
+              ? 'Cannot connect to server.'
+              : (err.error?.detail ?? 'Search failed.');
           this.videos = [];
           this.total = 0;
         },
@@ -138,8 +138,8 @@ export class VideosComponent implements OnInit {
           },
           error: err => {
             this.error = err.status === 0
-              ? 'No se puede conectar al servidor.'
-              : (err.error?.detail ?? 'Error en la búsqueda.');
+              ? 'Cannot connect to server.'
+              : (err.error?.detail ?? 'Search failed.');
             this.videos = [];
             this.total = 0;
           },

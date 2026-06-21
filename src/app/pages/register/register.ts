@@ -39,8 +39,8 @@ export class Register {
           this.errorMessage =
             err.error?.detail ??
             (err.status === 422
-              ? 'Datos inválidos. Revisa los campos.'
-              : 'Error al registrarse. Inténtalo de nuevo.');
+              ? 'Invalid data. Check your fields.'
+              : 'Registration failed. Try again.');
         },
       });
   }

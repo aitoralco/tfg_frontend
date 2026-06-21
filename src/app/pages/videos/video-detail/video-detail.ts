@@ -54,7 +54,7 @@ export class VideoDetail implements OnInit, AfterViewChecked {
       .subscribe({
         next: info => (this.info = info),
         error: err => {
-          this.loadError = err.error?.detail ?? 'No se pudo cargar la información del vídeo.';
+          this.loadError = err.error?.detail ?? 'Failed to load video information.';
         },
       });
   }
@@ -107,7 +107,7 @@ export class VideoDetail implements OnInit, AfterViewChecked {
           this.ewLoaded = true;
         },
         error: err => {
-          this.ewError = err.error?.detail ?? 'Error al cargar los recortes EW.';
+          this.ewError = err.error?.detail ?? 'Failed to load EW crops.';
           this.ewLoaded = false;
         },
       });
@@ -126,7 +126,7 @@ export class VideoDetail implements OnInit, AfterViewChecked {
           this.demLoaded = true;
         },
         error: err => {
-          this.demError = err.error?.detail ?? 'Error al cargar los recortes DEM.';
+          this.demError = err.error?.detail ?? 'Failed to load DEM crops.';
           this.demLoaded = false;
         },
       });
@@ -199,22 +199,22 @@ export class VideoDetail implements OnInit, AfterViewChecked {
   getStatusLabel(status: StatusName): string {
     const labels: Record<StatusName, string> = {
       error: 'Error',
-      unprocessed: 'Sin procesar',
-      processing_0: 'Iniciando procesamiento',
-      processing_dw: 'Detectando rorcuales',
-      processing_ew: 'Recortando rorcuales',
-      processing_dem: 'Extrayendo marcas dorsales',
-      processed: 'Procesado',
+      unprocessed: 'Unprocessed',
+      processing_0: 'Starting',
+      processing_dw: 'Detecting whales',
+      processing_ew: 'Cropping whales',
+      processing_dem: 'Extracting dorsal marks',
+      processed: 'Processed',
     };
     return labels[status] ?? status;
   }
 
   getUnavailableMessage(): string {
     const s = this.info?.status.status_name;
-    if (s === 'error') return 'Ocurrió un error durante el procesamiento.';
-    if (s === 'unprocessed') return 'El vídeo aún no ha sido procesado.';
-    if (s?.startsWith('processing_')) return 'El análisis está en curso, vuelve más tarde.';
-    return 'Datos no disponibles.';
+    if (s === 'error') return 'An error occurred during processing.';
+    if (s === 'unprocessed') return 'The video has not been processed yet.';
+    if (s?.startsWith('processing_')) return 'Analysis in progress, check back later.';
+    return 'Data not available.';
   }
 
   goBack() {

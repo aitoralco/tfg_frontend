@@ -4,15 +4,15 @@
     <div class="nav-links">
       <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
         <mat-icon>home</mat-icon>
-        <span>Inicio</span>
+        <span>Home</span>
       </a>
       <a routerLink="/videos" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
         <mat-icon>video_library</mat-icon>
-        <span>Vídeos</span>
+        <span>Videos</span>
       </a>
       <a routerLink="/contact" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
         <mat-icon>contact_support</mat-icon>
-        <span>Contacto</span>
+        <span>Contact</span>
       </a>
     </div>
     <div class="nav-user">
@@ -21,11 +21,11 @@
         @if (user.role.name === 'admin') {
           <button class="btn-admin" routerLink="/admin">Admin</button>
         }
-        <button class="btn-profile" routerLink="/profile">Mis vídeos</button>
-        <button class="btn-logout" (click)="onLogout()">Cerrar sesión</button>
+        <button class="btn-profile" routerLink="/profile">My Videos</button>
+        <button class="btn-logout" (click)="onLogout()">Logout</button>
       } @else {
-        <button class="btn-login" routerLink="/register">Registrarse</button>
-        <button class="btn-profile" routerLink="/login">Iniciar sesión</button>
+        <button class="btn-login" routerLink="/register">Register</button>
+        <button class="btn-profile" routerLink="/login">Login</button>
       }
     </div>
   </nav>

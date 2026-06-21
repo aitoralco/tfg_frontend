@@ -1,12 +1,12 @@
 <div class="detail-wrapper">
   <button class="btn-back" (click)="goBack()">
-    <mat-icon>arrow_back</mat-icon> Volver
+    <mat-icon>arrow_back</mat-icon> Back to Videos
   </button>
 
   @if (isLoading) {
     <div class="state-card">
       <mat-icon>hourglass_empty</mat-icon>
-      <span>Cargando...</span>
+      <span>Loading...</span>
     </div>
   }
 
@@ -32,7 +32,7 @@
           </span>
           <span class="shared-badge" [class.shared-yes]="info.shared" [class.shared-no]="!info.shared">
             <mat-icon>{{ info.shared ? 'public' : 'lock' }}</mat-icon>
-            {{ info.shared ? 'Público' : 'Privado' }}
+            {{ info.shared ? 'Public' : 'Private' }}
           </span>
         </div>
         @if (info.description) {
@@ -63,7 +63,7 @@
         [class.unavailable]="!info.dw.available"
         (click)="setTab('dw')">
         <mat-icon>analytics</mat-icon>
-        <span>Rorcuales</span>
+        <span>Detecting Whales</span>
         @if (info.dw.available) {
           <span class="tab-badge">{{ info.dw.label_count }}</span>
         }
@@ -74,7 +74,7 @@
         [class.unavailable]="!info.ew.available"
         (click)="setTab('ew')">
         <mat-icon>pets</mat-icon>
-        <span>Recortes</span>
+        <span>Crops</span>
         @if (info.ew.available) {
           <span class="tab-badge">{{ info.ew.crop_count }}</span>
         }
@@ -85,7 +85,7 @@
         [class.unavailable]="!info.dem.available"
         (click)="setTab('dem')">
         <mat-icon>layers</mat-icon>
-        <span>Marcas dorsales</span>
+        <span>Dorsal Marks</span>
         @if (info.dem.available) {
           <span class="tab-badge">{{ info.dem.crop_count }}</span>
         }
@@ -96,7 +96,7 @@
         [class.unavailable]="!info.classification"
         (click)="setTab('clf')">
         <mat-icon>bar_chart</mat-icon>
-        <span>Clasificación</span>
+        <span>Classification</span>
         <span class="tab-beta">Beta</span>
         @if (info.classification) {
           <span class="tab-badge">{{ clfEntries.length }}</span>
@@ -107,7 +107,7 @@
     <!-- Original tab – always in DOM once info loads, hidden via CSS when inactive -->
     <div class="player-card" [style.display]="activeTab !== 'original' ? 'none' : ''">
       <video #origVideo class="video-player" controls preload="metadata">
-        Tu navegador no soporta la reproducción de vídeo.
+        Your browser does not support the video tag.
       </video>
     </div>
 
@@ -116,12 +116,12 @@
       @if (info.dw.available) {
         <div class="player-card">
           <video #dwVideo class="video-player" controls preload="metadata">
-            Tu navegador no soporta la reproducción de vídeo.
+            Your browser does not support the video tag.
           </video>
         </div>
         <div class="dw-stats">
           <mat-icon>label</mat-icon>
-          <span>{{ info.dw.label_count }} detecciones anotadas</span>
+          <span>{{ info.dw.label_count }} annotated detections</span>
         </div>
       } @else {
         <div class="unavailable-card">
@@ -137,7 +137,7 @@
         @if (ewLoading) {
           <div class="state-card">
             <mat-icon>hourglass_empty</mat-icon>
-            <span>Cargando recortes...</span>
+            <span>Loading crops...</span>
           </div>
         } @else if (ewError) {
           <div class="error-banner">
@@ -147,13 +147,13 @@
         } @else {
           <div class="crops-section">
             <div class="crops-header">
-              <span>{{ ewTotal }} recorte{{ ewTotal !== 1 ? 's' : '' }}</span>
+              <span>{{ ewTotal }} crop{{ ewTotal !== 1 ? 's' : '' }}</span>
             </div>
             <div class="crops-grid">
               @for (crop of ewCrops; track crop.key) {
-                <img [src]="crop.url" class="crop-img" alt="Recorte EW" />
+                <img [src]="crop.url" class="crop-img" alt="EW crop" />
               } @empty {
-                <p class="no-crops">No hay recortes disponibles.</p>
+                <p class="no-crops">No crops available.</p>
               }
             </div>
             @if (ewTotalPages > 1) {
@@ -192,16 +192,16 @@
           <div class="clf-summary">
             <div class="clf-stat">
               <span class="clf-stat-value">{{ info.classification.total_images }}</span>
-              <span class="clf-stat-label">imágenes totales</span>
+              <span class="clf-stat-label">total images</span>
             </div>
             <div class="clf-stat">
               <span class="clf-stat-value">{{ info.classification.classified_images }}</span>
-              <span class="clf-stat-label">clasificadas</span>
+              <span class="clf-stat-label">classified</span>
             </div>
             @if (info.classification.errors > 0) {
               <div class="clf-stat clf-stat-error">
                 <span class="clf-stat-value">{{ info.classification.errors }}</span>
-                <span class="clf-stat-label">errores</span>
+                <span class="clf-stat-label">errors</span>
               </div>
             }
           </div>
@@ -210,7 +210,7 @@
               <div class="clf-class-card">
                 <div class="clf-class-header">
                   <span class="clf-class-name">{{ entry.name }}</span>
-                  <span class="clf-class-count">{{ entry.count }} imagen{{ entry.count !== 1 ? 'es' : '' }}</span>
+                  <span class="clf-class-count">{{ entry.count }} image{{ entry.count !== 1 ? 's' : '' }}</span>
                 </div>
                 <div class="clf-bar-row">
                   <div class="clf-bar-track">
@@ -220,7 +220,7 @@
                 </div>
                 <div class="clf-confidence">
                   <mat-icon>psychology</mat-icon>
-                  Confianza media: <strong>{{ (entry.avg_confidence * 100) | number:'1.1-1' }}%</strong>
+                  Average confidence: <strong>{{ (entry.avg_confidence * 100) | number:'1.1-1' }}%</strong>
                 </div>
               </div>
             }
@@ -240,7 +240,7 @@
         @if (demLoading) {
           <div class="state-card">
             <mat-icon>hourglass_empty</mat-icon>
-            <span>Cargando recortes...</span>
+            <span>Loading crops...</span>
           </div>
         } @else if (demError) {
           <div class="error-banner">
@@ -250,13 +250,13 @@
         } @else {
           <div class="crops-section">
             <div class="crops-header">
-              <span>{{ demTotal }} recorte{{ demTotal !== 1 ? 's' : '' }}</span>
+              <span>{{ demTotal }} crop{{ demTotal !== 1 ? 's' : '' }}</span>
             </div>
             <div class="crops-grid">
               @for (crop of demCrops; track crop.key) {
-                <img [src]="crop.url" class="crop-img" alt="Recorte DEM" />
+                <img [src]="crop.url" class="crop-img" alt="DEM crop" />
               } @empty {
-                <p class="no-crops">No hay recortes disponibles.</p>
+                <p class="no-crops">No crops available.</p>
               }
             </div>
             @if (demTotalPages > 1) {

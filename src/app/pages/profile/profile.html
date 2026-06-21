@@ -10,13 +10,13 @@
   <!-- Tabs -->
   <div class="tab-bar">
     <button class="tab-btn" [class.active]="activeTab === 'videos'" (click)="setTab('videos')">
-      <mat-icon>video_library</mat-icon> Mis vídeos
+      <mat-icon>video_library</mat-icon> My Videos
     </button>
     <button class="tab-btn" [class.active]="activeTab === 'upload'" (click)="setTab('upload')">
-      <mat-icon>upload</mat-icon> Subir
+      <mat-icon>upload</mat-icon> Upload
     </button>
     <button class="tab-btn" [class.active]="activeTab === 'settings'" (click)="setTab('settings')">
-      <mat-icon>settings</mat-icon> Ajustes
+      <mat-icon>settings</mat-icon> Settings
     </button>
   </div>
 
@@ -29,24 +29,24 @@
         <div class="filter-row">
           <div class="filter-search">
             <mat-icon>search</mat-icon>
-            <input type="text" formControlName="q" placeholder="Buscar por título o descripción…" />
+            <input type="text" formControlName="q" placeholder="Search by title or description..." />
           </div>
           <select formControlName="status_id" class="filter-select">
-            <option value="">Todos los estados</option>
+            <option value="">All statuses</option>
             @for (s of statusOptions; track s.id) {
               <option [value]="s.id">{{ s.label }}</option>
             }
           </select>
-          <input type="date" formControlName="date_from" class="filter-date" title="Desde" />
-          <input type="date" formControlName="date_to" class="filter-date" title="Hasta" />
+          <input type="date" formControlName="date_from" class="filter-date" title="From" />
+          <input type="date" formControlName="date_to" class="filter-date" title="To" />
         </div>
         <div class="filter-row filter-row-bottom">
           <div class="filter-sort">
-            <span class="filter-label">Ordenar por</span>
+            <span class="filter-label">Sort by</span>
             <select formControlName="sort_by" class="filter-select">
-              <option value="created_at">Fecha de subida</option>
-              <option value="updated_at">Última actualización</option>
-              <option value="title">Título</option>
+              <option value="created_at">Upload date</option>
+              <option value="updated_at">Last updated</option>
+              <option value="title">Title</option>
             </select>
             <button type="button" class="btn-order" (click)="filterForm.get('order')?.setValue(filterForm.get('order')?.value === 'asc' ? 'desc' : 'asc')">
               <mat-icon>{{ filterForm.get('order')?.value === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
@@ -56,29 +56,29 @@
           <div class="filter-actions">
             @if (hasActiveFilters) {
               <button type="button" class="btn-secondary" (click)="clearFilters()">
-                <mat-icon>close</mat-icon> Limpiar
+                <mat-icon>close</mat-icon> Clear
               </button>
             }
             <button type="submit" class="btn-primary">
-              <mat-icon>search</mat-icon> Buscar
+              <mat-icon>search</mat-icon> Search
             </button>
           </div>
         </div>
       </form>
 
       @if (videosLoading) {
-        <div class="loading-text">Cargando vídeos…</div>
+        <div class="loading-text">Loading videos...</div>
       } @else if (myVideos.length === 0 && !hasActiveFilters) {
         <div class="empty-state">
           <mat-icon>videocam_off</mat-icon>
-          <p>Aún no has subido ningún vídeo.</p>
-          <button class="btn-primary" (click)="setTab('upload')">Subir vídeo</button>
+          <p>You haven't uploaded any videos yet.</p>
+          <button class="btn-primary" (click)="setTab('upload')">Upload a video</button>
         </div>
       } @else if (myVideos.length === 0) {
         <div class="empty-state">
           <mat-icon>search_off</mat-icon>
-          <p>No se encontraron vídeos con los filtros aplicados.</p>
-          <button class="btn-secondary" (click)="clearFilters()">Limpiar filtros</button>
+          <p>No videos found matching the filters.</p>
+          <button class="btn-secondary" (click)="clearFilters()">Clear filters</button>
         </div>
       } @else {
         <div class="my-video-list">
@@ -102,20 +102,20 @@
                     </span>
                     <span class="shared-badge" [class.shared-yes]="video.shared" [class.shared-no]="!video.shared">
                       <mat-icon>{{ video.shared ? 'public' : 'lock' }}</mat-icon>
-                      {{ video.shared ? 'Público' : 'Privado' }}
+                      {{ video.shared ? 'Public' : 'Private' }}
                     </span>
                   </div>
                   <div class="my-video-desc">{{ video.description }}</div>
                   <div class="my-video-date">{{ video.created_at | date:'mediumDate' }}</div>
                   <div class="my-video-actions">
                     <button class="btn-secondary" (click)="startEdit(video)">
-                      <mat-icon>edit</mat-icon> Editar
+                      <mat-icon>edit</mat-icon> Edit
                     </button>
                     <button class="btn-danger" (click)="deleteVideo(video.id)">
-                      <mat-icon>delete</mat-icon> Eliminar
+                      <mat-icon>delete</mat-icon> Delete
                     </button>
                     <button class="btn-watch" (click)="watchVideo(video)">
-                      <mat-icon>play_arrow</mat-icon> Ver
+                      <mat-icon>play_arrow</mat-icon> Watch
                     </button>
                   </div>
                 </div>
@@ -126,28 +126,28 @@
                     <div class="error-message">{{ editError }}</div>
                   }
                   <div class="form-group">
-                    <label>Título</label>
+                    <label>Title</label>
                     <input type="text" formControlName="title" />
                   </div>
                   <div class="form-group">
-                    <label>Descripción</label>
+                    <label>Description</label>
                     <textarea formControlName="description" rows="3"></textarea>
                   </div>
                   <div class="form-group">
-                    <label>Visibilidad</label>
+                    <label>Visibility</label>
                     <div class="toggle-row">
                       <label class="toggle-switch">
                         <input type="checkbox" formControlName="shared" />
                         <span class="toggle-slider"></span>
                       </label>
                       <span class="toggle-label">
-                        {{ editForm.get('shared')?.value ? 'Público' : 'Privado' }}
+                        {{ editForm.get('shared')?.value ? 'Public' : 'Private' }}
                       </span>
                     </div>
                   </div>
                   <div class="edit-actions">
-                    <button class="btn-primary" (click)="saveEdit(video.id)">Guardar</button>
-                    <button class="btn-secondary" (click)="cancelEdit()">Cancelar</button>
+                    <button class="btn-primary" (click)="saveEdit(video.id)">Save</button>
+                    <button class="btn-secondary" (click)="cancelEdit()">Cancel</button>
                   </div>
                 </div>
               }
@@ -162,29 +162,29 @@
   @if (activeTab === 'upload') {
     <div class="tab-content">
       <div class="form-card">
-        <div class="card-title">Subir vídeo</div>
+        <div class="card-title">Upload a Video</div>
 
         <form [formGroup]="uploadForm" (ngSubmit)="onUpload()">
           <div class="form-group">
-            <label>Título <span class="required">*</span></label>
-            <input type="text" formControlName="title" placeholder="Título del vídeo..." />
+            <label>Title <span class="required">*</span></label>
+            <input type="text" formControlName="title" placeholder="Video title..." />
           </div>
           <div class="form-group">
-            <label>Descripción</label>
-            <textarea formControlName="description" rows="4" placeholder="Descripción opcional..."></textarea>
+            <label>Description</label>
+            <textarea formControlName="description" rows="4" placeholder="Optional description..."></textarea>
           </div>
           <div class="form-group">
-            <label>Archivo de vídeo <span class="required">*</span></label>
+            <label>Video file <span class="required">*</span></label>
             <div class="file-input-wrapper">
               <input type="file" accept="video/*" id="videoFile" class="file-input-hidden" (change)="onFileChange($event)" />
               <label for="videoFile" class="btn-file-pick">
                 <mat-icon>attach_file</mat-icon>
-                Elegir archivo
+                Choose file
               </label>
               @if (uploadFile) {
                 <span class="file-name">{{ uploadFile.name }}</span>
               } @else {
-                <span class="file-name file-name-empty">Ningún archivo seleccionado</span>
+                <span class="file-name file-name-empty">No file selected</span>
               }
             </div>
           </div>
@@ -212,7 +212,7 @@
             type="submit"
             class="btn-primary"
             [disabled]="uploadForm.invalid || !uploadFile || uploadLoading">
-            {{ uploadLoading ? 'Subiendo...' : 'Subir' }}
+            {{ uploadLoading ? 'Uploading...' : 'Upload' }}
           </button>
         </form>
       </div>
@@ -224,8 +224,8 @@
     <div class="tab-content">
       <!-- Update profile -->
       <div class="form-card">
-        <div class="card-title">Actualizar perfil</div>
-        <p class="hint">Deja los campos vacíos para no modificarlos. La contraseña actual siempre es obligatoria.</p>
+        <div class="card-title">Update Profile</div>
+        <p class="hint">Leave fields empty to keep them unchanged. Current password is always required.</p>
 
         @if (settingsError) {
           <div class="error-message">{{ settingsError }}</div>
@@ -236,50 +236,50 @@
 
         <form [formGroup]="settingsForm" (ngSubmit)="onSaveSettings()">
           <div class="form-group">
-            <label>Nuevo usuario</label>
+            <label>New username</label>
             <input type="text" formControlName="username" [placeholder]="currentUser?.username ?? ''" />
           </div>
           <div class="form-group">
-            <label>Nuevo correo electrónico</label>
+            <label>New email</label>
             <input type="email" formControlName="email" [placeholder]="currentUser?.email ?? ''" />
           </div>
           <div class="form-group">
-            <label>Nueva contraseña</label>
-            <input type="password" formControlName="new_password" placeholder="Dejar vacío para no cambiarla" />
+            <label>New password</label>
+            <input type="password" formControlName="new_password" placeholder="Leave empty to keep current" />
           </div>
           <div class="form-group">
-            <label>Contraseña actual <span class="required">*</span></label>
-            <input type="password" formControlName="current_password" placeholder="Obligatoria para confirmar" />
+            <label>Current password <span class="required">*</span></label>
+            <input type="password" formControlName="current_password" placeholder="Required to confirm" />
           </div>
           <button type="submit" class="btn-primary" [disabled]="settingsForm.invalid || settingsLoading">
-            {{ settingsLoading ? 'Guardando...' : 'Guardar cambios' }}
+            {{ settingsLoading ? 'Saving...' : 'Save Changes' }}
           </button>
         </form>
       </div>
 
       <!-- Delete account -->
       <div class="form-card danger-zone">
-        <div class="card-title danger-title">Zona de peligro</div>
+        <div class="card-title danger-title">Danger Zone</div>
 
         @if (!showDeleteConfirm) {
           <button class="btn-danger-outline" (click)="showDeleteConfirm = true">
-            <mat-icon>delete_forever</mat-icon> Eliminar cuenta
+            <mat-icon>delete_forever</mat-icon> Delete Account
           </button>
         } @else {
-          <p class="danger-warning">Esta acción es irreversible. Introduce tu contraseña para confirmar.</p>
+          <p class="danger-warning">This action is irreversible. Enter your password to confirm.</p>
           @if (deleteError) {
             <div class="error-message">{{ deleteError }}</div>
           }
           <form [formGroup]="deleteForm" (ngSubmit)="onDeleteAccount()">
             <div class="form-group">
-              <label>Contraseña</label>
+              <label>Password</label>
               <input type="password" formControlName="current_password" />
             </div>
             <div class="edit-actions">
               <button type="submit" class="btn-danger" [disabled]="deleteForm.invalid || deleteLoading">
-                {{ deleteLoading ? 'Eliminando...' : 'Confirmar eliminación' }}
+                {{ deleteLoading ? 'Deleting...' : 'Confirm Delete' }}
               </button>
-              <button type="button" class="btn-secondary" (click)="showDeleteConfirm = false">Cancelar</button>
+              <button type="button" class="btn-secondary" (click)="showDeleteConfirm = false">Cancel</button>
             </div>
           </form>
         }

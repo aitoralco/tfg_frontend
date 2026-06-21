@@ -1,15 +1,15 @@
 <div class="admin-wrapper">
-  <div class="page-title">Panel de administración</div>
+  <div class="page-title">Admin Panel</div>
 
   @if (errorMessage) {
     <div class="error-message">{{ errorMessage }}</div>
   }
 
   @if (isLoading) {
-    <div class="loading-text">Cargando usuarios...</div>
+    <div class="loading-text">Loading users...</div>
   } @else {
     <div class="users-card">
-      <div class="card-title">Usuarios ({{ users.length }})</div>
+      <div class="card-title">Users ({{ users.length }})</div>
 
       <div class="user-list">
         @for (user of users; track user.id) {
@@ -24,33 +24,32 @@
               </div>
               <div class="user-actions">
                 <button class="btn-secondary" (click)="startEdit(user)">
-                  <mat-icon>edit</mat-icon> Editar
+                  <mat-icon>edit</mat-icon> Edit
                 </button>
                 <button class="btn-danger" (click)="deleteUser(user.id)">
-                  <mat-icon>delete</mat-icon> Eliminar
+                  <mat-icon>delete</mat-icon> Delete
                 </button>
               </div>
             } @else {
-              <!-- Formulario de edición -->
               <div class="edit-form" [formGroup]="editForm">
                 @if (editError) {
                   <div class="error-message">{{ editError }}</div>
                 }
                 <div class="edit-fields">
                   <div class="form-group">
-                    <label>Usuario</label>
+                    <label>Username</label>
                     <input type="text" formControlName="username" />
                   </div>
                   <div class="form-group">
-                    <label>Correo electrónico</label>
+                    <label>Email</label>
                     <input type="email" formControlName="email" />
                   </div>
                   <div class="form-group">
-                    <label>Nueva contraseña</label>
-                    <input type="password" formControlName="password" placeholder="Dejar vacío para mantener" />
+                    <label>New password</label>
+                    <input type="password" formControlName="password" placeholder="Leave empty to keep" />
                   </div>
                   <div class="form-group">
-                    <label>Rol</label>
+                    <label>Role</label>
                     <select formControlName="role_id">
                       <option [value]="1">admin</option>
                       <option [value]="2">user</option>
@@ -58,14 +57,14 @@
                   </div>
                 </div>
                 <div class="edit-actions">
-                  <button class="btn-primary" (click)="saveEdit(user.id)">Guardar</button>
-                  <button class="btn-secondary" (click)="cancelEdit()">Cancelar</button>
+                  <button class="btn-primary" (click)="saveEdit(user.id)">Save</button>
+                  <button class="btn-secondary" (click)="cancelEdit()">Cancel</button>
                 </div>
               </div>
             }
           </div>
         } @empty {
-          <div class="empty-state">No se encontraron usuarios.</div>
+          <div class="empty-state">No users found.</div>
         }
       </div>
     </div>

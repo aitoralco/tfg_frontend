@@ -40,7 +40,7 @@ export class Admin implements OnInit {
       },
       error: err => {
         this.isLoading = false;
-        this.errorMessage = err.error?.detail ?? 'Error al cargar los usuarios.';
+        this.errorMessage = err.error?.detail ?? 'Failed to load users.';
       },
     });
   }
@@ -75,18 +75,18 @@ export class Admin implements OnInit {
         this.editingUserId = null;
       },
       error: err => {
-        this.editError = err.error?.detail ?? 'Error al guardar los cambios.';
+        this.editError = err.error?.detail ?? 'Update failed.';
       },
     });
   }
 
   deleteUser(userId: number) {
-    if (!confirm('¿Eliminar este usuario? Esta acción no se puede deshacer.')) return;
+    if (!confirm('Delete this user? This cannot be undone.')) return;
     this.userService.deleteUser(userId).subscribe({
       next: () => {
         this.users = this.users.filter(u => u.id !== userId);
       },
-      error: err => alert(err.error?.detail ?? 'Error al eliminar el usuario.'),
+      error: err => alert(err.error?.detail ?? 'Delete failed.'),
     });
   }
 }

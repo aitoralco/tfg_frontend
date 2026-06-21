@@ -37,7 +37,7 @@ export class Login {
         error: err => {
           this.errorMessage =
             err.error?.detail ??
-            (err.status === 401 ? 'Usuario o contraseña incorrectos.' : 'Error al iniciar sesión. Inténtalo de nuevo.');
+            (err.status === 401 ? 'Invalid username or password.' : 'Login failed. Try again.');
         },
       });
   }
