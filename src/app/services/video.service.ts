@@ -58,8 +58,15 @@ export class VideoService {
     return this.http.get<VideoPreviewResponse>(`${this.apiUrl}/videos/search`, { params });
   }
 
+  // <video src> cannot send the Authorization header: the token goes in the URL
+  // so the owner (or an admin) can play private videos.
+  private withToken(url: string): string {
+    const token = localStorage.getItem('token');
+    return token ? `${url}?token=${encodeURIComponent(token)}` : url;
+  }
+
   getVideoUrl(videoId: number): string {
-    return `${this.apiUrl}/videos/${videoId}`;
+    return this.withToken(`${this.apiUrl}/videos/${videoId}`);
   }
 
   upload(title: string, description: string, file: File) {
@@ -78,7 +85,7 @@ export class VideoService {
   }
 
   getDwStreamUrl(id: number): string {
-    return `${this.apiUrl}/videos/${id}/dw/stream`;
+    return this.withToken(`${this.apiUrl}/videos/${id}/dw/stream`);
   }
 
   getEwCrops(id: number, offset = 0, limit = 20) {

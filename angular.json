@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "it_01": {
+    "whaler-frontend": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -40,7 +40,7 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "8kB",
+                  "maximumWarning": "12kB",
                   "maximumError": "16kB"
                 }
               ],
@@ -64,10 +64,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "it_01:build:production"
+              "buildTarget": "whaler-frontend:build:production"
             },
             "development": {
-              "buildTarget": "it_01:build:development"
+              "buildTarget": "whaler-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
