@@ -92,3 +92,7 @@ npm test          # tests unitarios con Vitest
 ## Documentación
 
 - [`../tfg_backend/docs/frontend_api_guide.md`](../tfg_backend/docs/frontend_api_guide.md): cómo usa el frontend la API del backend (endpoints, payloads, auth). Está en el repo del backend, junto a la API que documenta.
+
+## Licencia
+
+© 2026 Aitor Alonso Coloma. Con licencia [Creative Commons Atribución-NoComercial 4.0 Internacional (CC BY-NC 4.0)](LICENSE): puedes usarlo, compartirlo y adaptarlo con fines no comerciales, siempre que cites al autor y enlaces la licencia.
