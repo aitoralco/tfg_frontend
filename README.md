@@ -50,6 +50,7 @@ Any other route redirects to `/`.
 - The API URL is set in `src/environments/environment.ts` (production build) and `src/environments/environment.development.ts` (`ng serve`). Both point to `http://127.0.0.1:8000`.
 - The URL is baked in at build time: changing it requires rebuilding the app (or the Docker image).
 - After login, the JWT and the user data are stored in `localStorage` (`token`, `user_data`). `services/auth.interceptor.ts` adds the `Authorization: Bearer <token>` header to every request.
+- `<video>` elements cannot send headers, so `VideoService` adds the token to the stream URLs (`?token=...`). This lets the owner (or an admin) play private videos.
 - The backend only accepts requests from the origins listed in `../tfg_backend/app/main.py` (CORS). If the frontend is served from another host or port, add it there.
 
 ## Running with Docker Compose (full stack)

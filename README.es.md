@@ -50,6 +50,7 @@ Cualquier otra ruta redirige a `/`.
 - La URL de la API se define en `src/environments/environment.ts` (build de producción) y `src/environments/environment.development.ts` (`ng serve`). Las dos apuntan a `http://127.0.0.1:8000`.
 - La URL queda fijada al compilar: para cambiarla hay que volver a compilar la app (o la imagen Docker).
 - Tras el login, el JWT y los datos del usuario se guardan en `localStorage` (`token`, `user_data`). `services/auth.interceptor.ts` añade la cabecera `Authorization: Bearer <token>` a todas las peticiones.
+- Los elementos `<video>` no pueden enviar cabeceras, así que `VideoService` añade el token a las URLs de streaming (`?token=...`). Así el propietario (o un admin) puede reproducir sus vídeos privados.
 - El backend solo acepta peticiones de los orígenes listados en `../tfg_backend/app/main.py` (CORS). Si el frontend se sirve desde otro host o puerto, hay que añadirlo ahí.
 
 ## Ejecución con Docker Compose (stack completo)

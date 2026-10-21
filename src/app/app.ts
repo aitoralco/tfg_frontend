@@ -12,5 +12,5 @@ import { NavigationBar } from './modules/navigation-bar/navigation-bar';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('it_01');
+  protected readonly title = signal('whaler-frontend');
 }
