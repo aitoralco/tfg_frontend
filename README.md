@@ -1,59 +1,93 @@
-# It01
+# Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
+**English** | [Español](README.es.md)
 
-## Development server
+Web client of the project, built with **Angular**. It is a SPA that lets users browse, search and watch videos, register / log in, manage their profile and videos, and (for admins) manage users. All data comes from the backend REST API (`../tfg_backend`).
 
-To start a local development server, run:
+## Technology
 
-```bash
-ng serve
+- **Angular 21** (standalone components) + **Angular Material**
+- **Tailwind CSS 4** (via PostCSS)
+- **Vitest** (unit tests, `ng test`)
+- **Nginx** (serves the production build inside Docker)
+- **npm** (dependency management, `package.json` + `package-lock.json`)
+
+## Project structure
+
+```
+src/
+├── app/
+│   ├── app.config.ts    # providers: router, HttpClient + auth interceptor
+│   ├── app.routes.ts    # routes
+│   ├── pages/           # one folder per page (home, videos, login, admin...)
+│   ├── modules/         # shared components (navigation-bar)
+│   ├── services/        # API services, auth guard and interceptor
+│   └── models/          # TypeScript interfaces (user, video)
+├── environments/        # apiUrl (production / development)
+├── material-theme.scss
+└── styles.css
+public/                  # static assets
+nginx/nginx.conf         # Nginx config used by the Docker image
+Dockerfile
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Pages
 
-## Code scaffolding
+| Route | Page | Access |
+|---|---|---|
+| `/` | Home | public |
+| `/videos` | Video list and search | public |
+| `/videos/:id` | Video detail / player | public |
+| `/contact` | Contact | public |
+| `/login`, `/register` | Login / sign up | public |
+| `/profile` | User profile and own videos | logged in (`authGuard`) |
+| `/admin` | User administration | admin role (`adminGuard`) |
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Any other route redirects to `/`.
 
-```bash
-ng generate component component-name
-```
+## Backend connection
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- The API URL is set in `src/environments/environment.ts` (production build) and `src/environments/environment.development.ts` (`ng serve`). Both point to `http://127.0.0.1:8000`.
+- The URL is baked in at build time: changing it requires rebuilding the app (or the Docker image).
+- After login, the JWT and the user data are stored in `localStorage` (`token`, `user_data`). `services/auth.interceptor.ts` adds the `Authorization: Bearer <token>` header to every request.
+- The backend only accepts requests from the origins listed in `../tfg_backend/app/main.py` (CORS). If the frontend is served from another host or port, add it there.
 
-```bash
-ng generate --help
-```
+## Running with Docker Compose (full stack)
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+From `../tfg_dockercompose`:
 
 ```bash
-ng test
+docker compose up --build -d
 ```
 
-## Running end-to-end tests
+The app is available at http://localhost:8080.
 
-For end-to-end (e2e) testing, run:
+The `Dockerfile` is a two-stage build:
+
+1. **Node** (`node:24-alpine`): `npm ci` + `npm run build` (production configuration).
+2. **Nginx** (`nginx-unprivileged`, non-root user): serves `dist/*/browser` on port `8080` with `nginx/nginx.conf`, which redirects unknown routes to `index.html` (Angular routing), enables gzip and caches static assets.
+
+## Running locally (development)
+
+1. Start the backend (see `../tfg_backend/README.md`), so that it is available at http://127.0.0.1:8000.
+2. Install dependencies:
+   ```bash
+   npm ci
+   ```
+3. Start the development server (auto reload):
+   ```bash
+   npm start
+   ```
+   The app is available at http://localhost:4200.
+
+## Build and tests
 
 ```bash
-ng e2e
+npm run build     # production build in dist/
+npm run watch     # development build in watch mode
+npm test          # unit tests with Vitest
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Documentation
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- [`../tfg_backend/docs/frontend_api_guide.md`](../tfg_backend/docs/frontend_api_guide.md): how the frontend uses the backend API (endpoints, payloads, auth). It lives in the backend repo, next to the API it documents.
